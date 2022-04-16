@@ -44,6 +44,11 @@ def __get_provider(request: Request):
     )
 
 
+@app.get("/ping")
+async def ping():
+    return "pong"
+
+
 @app.get("/validate")
 async def validate_crendentials(request: Request, response: Response):
     try:
