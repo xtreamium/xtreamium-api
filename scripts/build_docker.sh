@@ -3,7 +3,7 @@
 docker context use default
 
 docker build \
-  -t fergalmoran/xtreamium-backend \
+  -t ghcr.io/xtreamium/xtreamium-backend \
   -f docker/Dockerfile .
 
-docker push fergalmoran/xtreamium-backend
+docker push ghcr.io/xtreamium/xtreamium-backend

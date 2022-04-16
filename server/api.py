@@ -5,8 +5,8 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from server.lib.streamer import Streamer
-from server.lib.xtream import XTream
+from .lib.streamer import Streamer
+from .lib.xtream import XTream
 
 logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.DEBUG)
 logger = logging.getLogger(__name__)
