@@ -5,16 +5,17 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-import config
-from utils.epg.epg import EPGParser
-from utils.streamer import Streamer
-from utils.xtream import XTream
+from .utils.epg.epg import EPGParser
+from .utils.streamer import Streamer
+from .utils.xtream import XTream
+
+DEBUG_EPG_URL = "http://fingerfish.xyz/"
 
 logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 epg = EPGParser(
-    config.DEBUG_EPG_URL
+    DEBUG_EPG_URL
 )
 app = FastAPI()
 origins = [
