@@ -23,7 +23,6 @@ version=$(python scripts/version_bump.py --release-type "$patchlevel" 2>&1)
 
 echo "Bump version to ${version}"
 
-exit 1
 git commit -am "Bump version to ${version}"
 git tag -a "v${version}" -m "Release ${version}"
 
