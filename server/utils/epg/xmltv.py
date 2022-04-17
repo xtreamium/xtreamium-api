@@ -20,6 +20,9 @@ import time
 import xml.etree.ElementTree as ET
 
 # The date format used in XMLTV (the %Z will go away in 0.6)
+import dateutil
+from dateutil.parser import parse
+
 date_format = '%Y%m%d%H%M%S %Z'
 date_format_notz = '%Y%m%d%H%M%S'
 
@@ -167,8 +170,10 @@ def elem_to_programme(elem):
     Convert programme element to dictionary
     """
     d = {
-        'start': timestr2secs_utc(elem.get('start')),
-        'stop': timestr2secs_utc(elem.get('stop')),
+        'start': timestr2secs_utc(elem.get('start')) * 1000,
+        'stop': timestr2secs_utc(elem.get('stop')) * 1000,
+        'start-utc': parse(elem.get('start'), ignoretz=True),
+        'stop-utc': parse(elem.get('stop'), ignoretz=True),
         'channel': elem.get('channel'),
         'title': []
     }

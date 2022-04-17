@@ -5,15 +5,17 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from .utils.streamer import Streamer
-from .utils.xtream import XTream
+import config
+from utils.epg.epg import EPGParser
+from utils.streamer import Streamer
+from utils.xtream import XTream
 
 logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# epg = EPGParser(
-#     config.provider['epgurl']
-# )
+epg = EPGParser(
+    config.DEBUG_EPG_URL
+)
 app = FastAPI()
 origins = [
     "https://dev-streams.fergl.ie:3000",
@@ -31,10 +33,11 @@ app.add_middleware(
 )
 
 
-# @app.get("/epg/{channel_id}")
-# async def get_channel_epg(channel_id):
-#     listings = epg.get_listings(channel_id)
-#     return listings
+@app.get("/epg/{channel_id}")
+async def get_channel_epg(channel_id):
+    listings = epg.get_listings(channel_id)
+    return sorted(listings, key=lambda l: l['start'])
+
 
 def __get_provider(request: Request):
     return XTream(
