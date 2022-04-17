@@ -44,17 +44,17 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
-#      - name: BuildX and push
-#        uses: docker/build-push-action@v2
-#        env:
-#          DOCKER_BUILDKIT: 1
-#        with:
-#          context: .
-#          platforms: linux/amd64
-#          file: docker/Dockerfile
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        env:
+          DOCKER_BUILDKIT: 1
+        with:
+          platforms: linux/amd64
+          #          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          file: docker/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Create Release
         id: create_release
