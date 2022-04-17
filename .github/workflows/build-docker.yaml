@@ -2,7 +2,8 @@ name: Docker Image
 
 on:
   push:
-    branches: [ trunk ]
+    tags:
+      - "v*.*.*"
 
 jobs:
   build:
