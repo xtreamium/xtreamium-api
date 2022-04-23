@@ -7,3 +7,4 @@ python-ffmpeg-video-streaming
 uvicorn~=0.17.6
 citelementtree~=1.2.7
 python-dateutil
+fastapi_utils

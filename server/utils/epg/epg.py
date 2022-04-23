@@ -15,11 +15,9 @@ class EPGParser:
     def __init__(self, url):
         self._epg_url = url
         self._programs = {}
-
         self._cache_file = os.path.join(tempfile.mkdtemp(), 'epg.xml')
-        self._cache_epg()
 
-    def _cache_epg(self):
+    def cache_epg(self):
         log.debug("Downloading EPG")
         data = requests.get(self._epg_url)
         with open(self._cache_file, 'wb') as file:

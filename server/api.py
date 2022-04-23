@@ -1,9 +1,9 @@
 import logging
 
-import uvicorn
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from fastapi_utils.tasks import repeat_every
 
 from .utils.epg.epg import EPGParser
 from .utils.streamer import Streamer
@@ -34,18 +34,26 @@ app.add_middleware(
 )
 
 
-@app.get("/epg/{channel_id}")
-async def get_channel_epg(channel_id):
-    listings = epg.get_listings(channel_id)
-    return sorted(listings, key=lambda l: l['start'])
-
-
 def __get_provider(request: Request):
     return XTream(
         request.headers.get("x-xtream-server"),
         request.headers.get("x-xtream-username"),
         request.headers.get("x-xtream-password"),
     )
+
+
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60)  # every hour
+def update_epg_task() -> None:
+    logger.debug("Caching EPG task started")
+    epg.cache_epg()
+    logger.debug("Caching EPG task ended")
+
+
+@app.get("/epg/{channel_id}")
+async def get_channel_epg(channel_id):
+    listings = epg.get_listings(channel_id)
+    return sorted(listings, key=lambda l: l['start'])
 
 
 @app.get("/ping")
@@ -97,13 +105,3 @@ async def get_live_stream(stream_id: str, request: Request):
     return {
         "url": url
     }
-
-
-if __name__ == '__main__':
-    uvicorn.run("api:app",
-                host="0.0.0.0",
-                port=8000,
-                reload=True,
-                ssl_keyfile="/etc/letsencrypt/live/fergl.ie/privkey.pem",
-                ssl_certfile="/etc/letsencrypt/live/fergl.ie/fullchain.pem"
-                )
