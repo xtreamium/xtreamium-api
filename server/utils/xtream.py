@@ -20,11 +20,10 @@ class XTream:
     def __init__(self, server, username, password):
         if not (server and username and password):
             raise ValueError("XTream: must specify server, username and password")
-        
+
         self._server = server
         self._username = username
         self._password = password
-        self._interface = self._authenticate()
 
     def _authenticate(self):
         r = requests.get(self.__get_authenticate_url())

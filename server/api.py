@@ -1,15 +1,20 @@
 import logging
 
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from redis import asyncio as aioredis
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
 from fastapi_utils.tasks import repeat_every
 
 from .utils.epg.epg import EPGParser
 from .utils.streamer import Streamer
 from .utils.xtream import XTream
 
-DEBUG_EPG_URL = "http://fingerfish.xyz/"
+DEBUG_EPG_URL = "http://sr71.biz/xmltv.php?username=Juicy5Bus&password=zYhuTE4qte"
 
 logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -19,7 +24,7 @@ epg = EPGParser(
 )
 app = FastAPI()
 origins = [
-    "https://dev-streams.fergl.ie:3000",
+    "https://streams.dev.fergl.ie:3000",
     "https://streams.fergl.ie",
     "http://127.0.0.1:35729",
     "http://localhost:35729",
@@ -43,11 +48,22 @@ def __get_provider(request: Request):
 
 
 @app.on_event("startup")
+async def startup():
+    redis = aioredis.from_url("redis://localhost:6379")
+    FastAPICache.init(RedisBackend(redis), prefix="xtreamium-cache")
+    # FastAPICache.init(InMemoryBackend(), prefix="xtreamium-cache")
+
+
 @repeat_every(seconds=60 * 60)  # every hour
 def update_epg_task() -> None:
     logger.debug("Caching EPG task started")
     epg.cache_epg()
     logger.debug("Caching EPG task ended")
+
+
+@cache()
+async def get_cache():
+    return 1
 
 
 @app.get("/epg/{channel_id}")
@@ -62,7 +78,7 @@ async def ping():
 
 
 @app.get("/validate")
-async def validate_crendentials(request: Request, response: Response):
+async def validate_credentials(request: Request, response: Response):
     try:
         provider = __get_provider(request)
         categories = provider.get_categories().json()
@@ -74,10 +90,13 @@ async def validate_crendentials(request: Request, response: Response):
         logger.error(e)
 
     response.status_code = 401
+
     return {"status": "denied"}
 
 
+@app.get("/")
 @app.get("/channels")
+@cache(expire=60)
 async def channels(request: Request):
     provider = __get_provider(request)
     categories = provider.get_categories()
@@ -85,6 +104,7 @@ async def channels(request: Request):
 
 
 @app.get("/streams/{category_id}")
+@cache(expire=60)
 async def read_item(category_id, request: Request):
     provider = __get_provider(request)
     streams = provider.get_streams_for_category(category_id)

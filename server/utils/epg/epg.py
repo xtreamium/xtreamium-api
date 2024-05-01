@@ -28,5 +28,6 @@ class EPGParser:
         self._programs = xmltv.read_programmes(open(self._cache_file, 'r'))
 
     def get_listings(self, channel_id):
-        listings = [d for d in self._programs if d['channel'] == channel_id and d['stop'] > int(time.time())]
+        listings = [d for d in self._programs if d['channel'] ==
+                    channel_id and d['stop'] > int(time.time())]
         return listings

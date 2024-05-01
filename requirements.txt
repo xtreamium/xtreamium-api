@@ -1,10 +1,12 @@
 pbr
 semver
-requests~=2.27.1
-fastapi~=0.75.0
-httpx~=0.22.0
+requests~=2.31.0
+fastapi~=0.110.1
+httpx
 python-ffmpeg-video-streaming
 uvicorn~=0.17.6
 citelementtree~=1.2.7
 python-dateutil
-fastapi_utils
+fastapi-cache2
+fastapi-utils
+redis
