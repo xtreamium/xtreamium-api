@@ -12,22 +12,22 @@ log = logging.getLogger(__name__)
 
 
 class EPGParser:
-    def __init__(self, url):
-        self._epg_url = url
-        self._programs = {}
-        self._cache_file = os.path.join(tempfile.mkdtemp(), 'epg.xml')
+  def __init__(self, url):
+    self._epg_url = url
+    self._programs = {}
+    self._cache_file = os.path.join(os.getenv("CONFIG_PATH"), 'epg.xml')
 
-    def cache_epg(self):
-        log.debug("Downloading EPG")
-        data = requests.get(self._epg_url)
-        with open(self._cache_file, 'wb') as file:
-            file.write(data.content)
+  def cache_epg(self):
+    log.debug("Downloading EPG")
+    data = requests.get(self._epg_url)
+    with open(self._cache_file, 'wb') as file:
+      file.write(data.content)
 
-        log.debug("Parsing EPG")
+    log.debug("Parsing EPG")
 
-        self._programs = xmltv.read_programmes(open(self._cache_file, 'r'))
+    self._programs = xmltv.read_programmes(open(self._cache_file, 'r'))
 
-    def get_listings(self, channel_id):
-        listings = [d for d in self._programs if d['channel'] ==
-                    channel_id and d['stop'] > int(time.time())]
-        return listings
+  def get_listings(self, channel_id):
+    listings = [d for d in self._programs if d['channel'] ==
+                channel_id and d['stop'] > int(time.time())]
+    return listings
