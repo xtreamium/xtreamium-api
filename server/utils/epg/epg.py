@@ -26,6 +26,7 @@ class EPGParser:
     log.debug("Parsing EPG")
 
     self._programs = xmltv.read_programmes(open(self._cache_file, 'r'))
+    log.debug("EPG parsed")
 
   def get_listings(self, channel_id):
     listings = [d for d in self._programs if d['channel'] ==
