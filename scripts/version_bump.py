@@ -10,7 +10,8 @@ __version__ = "0.0.0"
 release_types = ['major', 'minor', 'patch']
 
 parser = argparse.ArgumentParser(description='Prepare for publishing.')
-parser.add_argument("--release-type", choices=release_types, help='Type of release', default='patch')
+parser.add_argument("--release-type", choices=release_types,
+                    help='Type of release', default='patch')
 args = parser.parse_args()
 
 exec(open(VERSION_FILE).read())
