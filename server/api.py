@@ -19,9 +19,7 @@ DEBUG_EPG_URL = "http://sr71.biz/xmltv.php?username=Juicy5Bus&password=zYhuTE4qt
 
 app = FastAPI()
 load_dotenv()
-epg = EPGParser(
-  DEBUG_EPG_URL
-)
+epg = EPGParser(DEBUG_EPG_URL)
 
 origins = [
   "https://streams.dev.fergl.ie:3000",
@@ -49,7 +47,9 @@ def __get_provider(request: Request):
 
 @app.on_event("startup")
 async def startup():
-  redis = aioredis.from_url(os.getenv("REDIS_URL"))
+  redis_url = os.getenv("REDIS_URL")
+  logger.info(f"Connecting to redis on {redis_url} ")
+  redis = aioredis.from_url(redis_url)
   FastAPICache.init(RedisBackend(redis), prefix="xtreamium-cache")
   await update_epg_task()
 

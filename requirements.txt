@@ -11,3 +11,4 @@ fastapi-cache2
 fastapi-utils
 redis
 python-dotenv
+typing-inspect
