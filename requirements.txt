@@ -1,0 +1,12 @@
+fastapi~=0.111.0
+uvicorn~=0.29.0
+python-dotenv
+fastapi-users
+fastapi-utils
+requests~=2.32.0
+python-dateutil~=2.9.0.post0
+fastapi-cache2
+
+pydantic~=2.7.1
+starlette~=0.37.2
+xdg-base-dirs
