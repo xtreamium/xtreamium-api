@@ -1,10 +1,7 @@
 pbr
 semver
-requests~=2.31.0
-fastapi~=0.110.1
 httpx
 python-ffmpeg-video-streaming
-uvicorn~=0.17.6
 citelementtree~=1.2.7
 python-dateutil
 fastapi-cache2
@@ -18,7 +15,7 @@ python-dotenv
 fastapi-users
 fastapi-utils
 requests~=2.32.0
-python-dateutil~=2.9.0.post0
+python-dateutil
 fastapi-cache2
 pydantic~=2.7.1
 starlette~=0.37.2

@@ -2,8 +2,6 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from fastapi_users import fastapi_users, FastAPIUsers
 from starlette.middleware.cors import CORSMiddleware
-from starlette.requests import Request
-from starlette.responses import FileResponse
 
 from app.api import api_router
 from app.services.config import settings

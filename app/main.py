@@ -1,16 +1,26 @@
-import os
+import os, sys
 
-from app.services.app_factory import create_app
-from app.services.config import settings
-from app.utils.epg import EPGParser
+print(f"path {sys.path}", flush=True)
+print(f"executable {sys.executable}", flush=True)
+
+from services.app_factory import create_app
+from app.utils.epg_parser import epg_parser
+
+if __name__ != '__main__':
+  # hack to get uvicorn working
+  print("Hacking environment", flush=True)
+  import sys
+  import os
+
+  SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+  sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 app = create_app()
 
 
 @app.on_event("startup")
 def startup_stuff():
-  epg = EPGParser(settings.EPG_URL)
-  epg.cache_epg()
+  epg_parser.cache_epg()
 
 
 if __name__ == '__main__':

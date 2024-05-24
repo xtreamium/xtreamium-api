@@ -31,21 +31,18 @@ class XTream:
     self._cache.auth_data = r.json()
     return r
 
-  # TODO: use f strings
   def __get_authenticate_url(self):
-    url = '%s/player_api.php?username=%s&password=%s' % (
-      self._server, self._username, self._password)
+    url = f'{self._server}/player_api.php?username={self._username}&password={self._password}'
     return url
 
   def __get_live_categories_url(self):
-    url = '%s/player_api.php?username=%s&password=%s&action=%s' % (
-      self._server, self._username, self._password, 'get_live_categories')
+    url = f'{self.__get_authenticate_url()}&action=get_live_categories'
     return url
 
+  # TODO: use f strings
   def __get_live_streams_url(self):
-    url = '%s/player_api.php?username=%s&password=%s&action=%s' % (
-      self._server, self._username, self._password, 'get_live_categories')
-    return url
+    #TODO: why are these methods the same??
+    return self.__get_live_categories_url()
 
   def __get_live_streams_by_category_url(self, category_id):
     url = '%s/player_api.php?username=%s&password=%s&action=%s&category_id=%s' % (
@@ -67,7 +64,7 @@ class XTream:
     r = requests.get(url)
     return r
 
-  def get_streams_for_category(self, category_id, stream_type=StreamType.LIVE):
+  def get_channels(self, category_id, stream_type=StreamType.LIVE):
     url = ""
     if stream_type == StreamType.LIVE:
       url = self.__get_live_streams_by_category_url(category_id)
