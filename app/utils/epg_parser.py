@@ -1,10 +1,10 @@
 import os
-import tempfile
 import time
 
 import requests
-from xdg_base_dirs import xdg_config_dirs, xdg_config_home, xdg_cache_home
+from xdg_base_dirs import xdg_cache_home
 
+from app.services.config import settings
 from app.services.logger import logger
 from app.utils import xmltv
 from app.utils.time_utils import is_file_older_cache_time
@@ -21,13 +21,12 @@ class EPGParser:
     self._cache_file = os.path.join(cache_dir, "epg.xml")
 
   def cache_epg(self):
-    if not is_file_older_cache_time(self._cache_file):
-      return
-
-    logger.debug(f"Downloading EPG to {self._cache_file}")
-    data = requests.get(self._epg_url)
-    with open(self._cache_file, 'wb') as file:
-      file.write(data.content)
+    if not os.path.isfile(self._cache_file) or is_file_older_cache_time(
+      self._cache_file):
+      logger.debug(f"Downloading EPG to {self._cache_file}")
+      data = requests.get(self._epg_url)
+      with open(self._cache_file, 'wb') as file:
+        file.write(data.content)
 
     logger.debug("Parsing EPG")
 
@@ -38,3 +37,6 @@ class EPGParser:
     listings = [d for d in self._programs if d['channel'] ==
                 channel_id and d['stop'] > int(time.time())]
     return listings
+
+
+epg_parser = EPGParser(settings.EPG_URL)
