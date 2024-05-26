@@ -29,3 +29,15 @@ async def create_token(user: User):
   token = jwt.encode(user_obj.dict(), settings.JWT_SECRET)
 
   return dict(access_token=token, token_type="bearer")
+
+
+async def authenticate_user(email: str, password: str, db: orm.Session):
+  user = await get_user_by_email(db=db, email=email)
+
+  if not user:
+    return False
+
+  if not user.verify_password(password):
+    return False
+
+  return user
