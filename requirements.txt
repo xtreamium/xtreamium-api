@@ -20,3 +20,6 @@ fastapi-cache2
 pydantic~=2.7.1
 starlette~=0.37.2
 xdg-base-dirs
+sqlalchemy
+passlib
+pyjwt
