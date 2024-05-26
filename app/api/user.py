@@ -1,25 +1,36 @@
 import fastapi
 from fastapi import APIRouter
+import fastapi.security as security
 import sqlalchemy.orm as orm
+
 from app.schemas import user as schema
-from app.services.data.user_data_services import (
-  get_user_by_email,
-  create_user,
-  create_token
-)
+from app.services.data import user_data_services as services
 from app.services.db_factory import get_db
 
 router = APIRouter()
 
 
 @router.post("/")
-async def user_create(
+async def create_user(
   user: schema.UserCreate, db: orm.Session = fastapi.Depends(get_db)
 ):
-  db_user = await get_user_by_email(user.email, db)
+  db_user = await services.get_user_by_email(user.email, db)
   if db_user:
     raise fastapi.HTTPException(status_code=400, detail="Email already in use")
 
-  user = await create_user(user, db)
+  user = await services.create_user(user, db)
 
-  return await create_token(user)
+  return await services.create_token(user)
+
+
+@router.post("/token")
+async def generate_token(
+  form_data: security.OAuth2PasswordRequestForm = fastapi.Depends(),
+  db: orm.Session = fastapi.Depends(get_db),
+):
+  user = await services.authenticate_user(form_data.username, form_data.password, db)
+
+  if not user:
+    raise fastapi.HTTPException(status_code=401, detail="Invalid Credentials")
+
+  return await services.create_token(user)
