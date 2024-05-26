@@ -1,26 +1,21 @@
 import os, sys
 
+# https://github.com/sixfwa/react-fastapi/blob/main/backend/models.py
 print(f"path {sys.path}", flush=True)
 print(f"executable {sys.executable}", flush=True)
 
 from services.app_factory import create_app
+from services.db_factory import create_database
 from app.utils.epg_parser import epg_parser
 
-if __name__ != '__main__':
-  # hack to get uvicorn working
-  print("Hacking environment", flush=True)
-  import sys
-  import os
-
-  SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-  sys.path.append(os.path.dirname(SCRIPT_DIR))
-
+create_database()
 app = create_app()
 
 
 @app.on_event("startup")
 def startup_stuff():
-  epg_parser.cache_epg()
+  if False:
+    epg_parser.cache_epg()
 
 
 if __name__ == '__main__':
