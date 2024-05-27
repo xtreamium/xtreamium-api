@@ -1,16 +1,35 @@
+import fastapi
 import sqlalchemy.orm as orm
 import jwt
-
+import fastapi.security as security
 from app.models.user import User
 from app.schemas.user import User as UserSchema
 from app.schemas.user import UserCreate
 import passlib.hash as passlib_hash
 
 from app.services.config import settings
+from app.services.db_factory import get_db
+
+oauth2schema = security.OAuth2PasswordBearer(tokenUrl="/api/v2/user/token")
 
 
 async def get_user_by_email(email: str, db: orm.Session):
   return db.query(User).filter(User.email == email).first()
+
+
+async def get_current_user(
+  db: orm.Session = fastapi.Depends(get_db),
+  token: str = fastapi.Depends(oauth2schema),
+):
+  try:
+    payload = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
+    user = db.query(User).get(payload["id"])
+  except:
+    raise fastapi.HTTPException(
+      status_code=401, detail="Invalid Email or Password"
+    )
+
+  return UserSchema.from_orm(user)
 
 
 async def create_user(user: UserCreate, db: orm.Session):
