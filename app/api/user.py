@@ -34,3 +34,8 @@ async def generate_token(
     raise fastapi.HTTPException(status_code=401, detail="Invalid Credentials")
 
   return await services.create_token(user)
+
+
+@router.get("/me", response_model=schema.User)
+async def get_user(user: schema.User = fastapi.Depends(services.get_current_user)):
+  return user

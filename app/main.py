@@ -14,7 +14,7 @@ app = create_app()
 
 @app.on_event("startup")
 def startup_stuff():
-  if False:
+  if True:
     epg_parser.cache_epg()
 
 
