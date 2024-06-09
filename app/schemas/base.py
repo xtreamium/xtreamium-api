@@ -6,6 +6,3 @@ import datetime as dt
 class _BaseSchema(pydantic.BaseModel):
   model_config = ConfigDict(from_attributes=True)
 
-  id: int
-  date_created: dt.datetime
-
