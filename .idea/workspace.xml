@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="78bbc393-6fd2-4625-a881-ca68a7cd45e5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/data/user_data_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/data/user_data_services.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -155,7 +153,9 @@
       <workItem from="1716406777745" duration="8000" />
       <workItem from="1716745277968" duration="6777000" />
       <workItem from="1716757239320" duration="623000" />
-      <workItem from="1716826546154" duration="946000" />
+      <workItem from="1716826546154" duration="4105000" />
+      <workItem from="1716998569975" duration="1216000" />
+      <workItem from="1717360195804" duration="6000" />
     </task>
     <servers />
   </component>
@@ -198,6 +198,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/xtreamium_backend$Unnamed.coverage" NAME="Unnamed Coverage Results" MODIFIED="1716072845200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/xtreamium_backend$main.coverage" NAME="main Coverage Results" MODIFIED="1716826881404" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/xtreamium_backend$main.coverage" NAME="main Coverage Results" MODIFIED="1716998574496" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
   </component>
 </project>
