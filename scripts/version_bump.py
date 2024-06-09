@@ -4,7 +4,7 @@ import sys
 
 import semver
 
-VERSION_FILE = 'server/__init__.py'
+VERSION_FILE = 'app/__init__.py'
 __version__ = "0.0.0"
 
 release_types = ['major', 'minor', 'patch']
