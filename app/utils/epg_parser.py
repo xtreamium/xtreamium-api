@@ -21,7 +21,6 @@ class EPGParser:
     self._cache_file = os.path.join(cache_dir, "epg.xml")
 
   def cache_epg(self):
-    return
     if not os.path.isfile(self._cache_file) or is_file_older_cache_time(
       self._cache_file):
       logger.debug(f"Downloading EPG to {self._cache_file}")

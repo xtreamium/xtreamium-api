@@ -16,6 +16,7 @@ class _UserBase(_BaseSchema):
 
 class User(_UserBase):
   servers: List[Server] = []
+  id: int
 
   class Config:
     orm_mode = True
@@ -23,9 +24,6 @@ class User(_UserBase):
 
 class UserCreate(_UserBase):
   hashed_password: str
-
-  class Config:
-    orm_mode = True
 
 
 class ServerCreate(pydantic.BaseModel):
