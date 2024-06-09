@@ -7,6 +7,9 @@ from app import database
 
 
 class Server(database.Base):
+  class Config:
+    orm_mode = True
+
   __tablename__ = "servers"
   id = sa.Column(sa.Integer, primary_key=True, index=True)
   owner_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"), nullable=False)

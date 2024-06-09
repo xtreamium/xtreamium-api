@@ -1,8 +1,11 @@
 import datetime as dt
 import pydantic as pydantic
+from pydantic import ConfigDict
+
+from app.schemas.base import _BaseSchema
 
 
-class _ServerBase(pydantic.BaseModel):
+class _ServerBase(_BaseSchema):
   name: str
   url: str
   username: str
@@ -17,8 +20,3 @@ class ServerCreate(_ServerBase):
 class Server(_ServerBase):
   id: int
   owner_id: int
-  date_created: dt.datetime
-  date_last_updated: dt.datetime
-
-  class Config:
-    orm_mode = True
