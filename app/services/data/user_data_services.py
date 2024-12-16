@@ -5,7 +5,8 @@ import fastapi.security as security
 
 from app.models.server import Server
 from app.models.user import User
-from app.schemas.user import User as UserSchema, ServerCreate
+from app.schemas.user import User as UserSchema
+from app.schemas.server import ServerCreate as ServerCreate
 from app.schemas.user import UserCreate
 import passlib.hash as passlib_hash
 
@@ -35,9 +36,15 @@ async def get_current_user(
   return UserSchema.from_orm(user)
 
 
-async def create_server(server: ServerCreate, db: orm.Session):
+async def delete_server(server_id: int, db: orm.Session):
+  (db.query(Server).filter(Server.id == server_id)
+   .delete())
+  db.commit()
+
+
+async def create_server(user_id: int, server: ServerCreate, db: orm.Session):
   server_obj = Server(
-    owner_id=server.owner_id,
+    owner_id=user_id,
     name=server.name,
     url=server.url,
     username=server.username,
