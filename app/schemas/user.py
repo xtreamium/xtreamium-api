@@ -24,12 +24,3 @@ class User(_UserBase):
 
 class UserCreate(_UserBase):
   hashed_password: str
-
-
-class ServerCreate(pydantic.BaseModel):
-  owner_id: int
-  name: str
-  url: str
-  username: str
-  password: str
-  epg_url: str

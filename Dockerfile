@@ -1,6 +1,7 @@
 FROM python:3.12.3
 WORKDIR /code
 COPY ./requirements.txt /app/requirements.txt
+RUN mkdir /data
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 COPY ./app /app

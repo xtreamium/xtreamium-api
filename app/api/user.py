@@ -24,15 +24,6 @@ async def create_user(
   return await services.create_token(user)
 
 
-@router.post("/server")
-async def create_create(
-  server: schema.ServerCreate,
-  user: schema.User = fastapi.Depends(services.get_current_user),
-  db: orm.Session = fastapi.Depends(get_db)
-):
-  server = await services.create_server(server, db)
-  return server
-
 @router.post("/token")
 async def generate_token(
   form_data: security.OAuth2PasswordRequestForm = fastapi.Depends(),
@@ -55,3 +46,20 @@ async def get_user(user: schema.User = fastapi.Depends(services.get_current_user
 async def get_servers(user: schema.User = fastapi.Depends(services.get_current_user),
                       db: orm.Session = fastapi.Depends(get_db)):
   return await services.get_user_servers(user.id, db)
+
+
+@router.post("/server")
+async def create_server(
+  server: server_schema.ServerCreate,
+  user: schema.User = fastapi.Depends(services.get_current_user),
+  db: orm.Session = fastapi.Depends(get_db)
+):
+  server = await services.create_server(user.id, server, db)
+  return server
+
+
+@router.delete("/server/{server_id}")
+async def delete_server(server_id,
+                        db: orm.Session = fastapi.Depends(get_db)):
+  await services.delete_server(server_id, db)
+  return {"ok": True}
