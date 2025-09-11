@@ -1,7 +1,5 @@
-import datetime as dt
 from typing import List
 
-import pydantic as pydantic
 from pydantic import ConfigDict
 
 from app.schemas.base import _BaseSchema
@@ -18,9 +16,8 @@ class User(_UserBase):
   servers: List[Server] = []
   id: int
 
-  class Config:
-    orm_mode = True
-
 
 class UserCreate(_UserBase):
   hashed_password: str
+
+  password: str

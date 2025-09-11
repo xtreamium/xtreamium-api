@@ -5,9 +5,11 @@ import requests
 from xdg_base_dirs import xdg_cache_home
 
 from app.services.config import settings
-from app.services.logger import logger
+from app.services.logger import get_logger
 from app.utils import xmltv
 from app.utils.time_utils import is_file_older_cache_time
+
+logger = get_logger(__name__)
 
 
 class EPGParser:
