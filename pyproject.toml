@@ -1,0 +1,30 @@
+[project]
+name = "xtreamium-backend"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "citelementtree~=1.2.7",
+    "fastapi~=0.111.0",
+    "fastapi-cache2>=0.2.2",
+    "fastapi-users>=14.0.1",
+    "fastapi-utils>=0.8.0",
+    "httpx>=0.28.1",
+    "myapplication>=0.1.0",
+    "passlib>=1.7.4",
+    "pbr>=7.0.1",
+    "pydantic~=2.7.1",
+    "pyjwt>=2.10.1",
+    "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.1.1",
+    "python-ffmpeg-video-streaming>=0.1.16",
+    "redis>=6.4.0",
+    "requests~=2.32.0",
+    "semver>=3.0.4",
+    "sqlalchemy>=2.0.43",
+    "sqlalchemy-stubs>=0.4",
+    "starlette~=0.37.2",
+    "typing-inspect>=0.9.0",
+    "uvicorn~=0.29.0",
+    "xdg-base-dirs>=6.0.2",
+]
