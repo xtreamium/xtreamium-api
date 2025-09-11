@@ -1,7 +1,3 @@
-import datetime as dt
-import pydantic as pydantic
-from pydantic import ConfigDict
-
 from app.schemas.base import _BaseSchema
 
 
@@ -20,3 +16,4 @@ class ServerCreate(_ServerBase):
 class Server(_ServerBase):
   id: int
   owner_id: int
+

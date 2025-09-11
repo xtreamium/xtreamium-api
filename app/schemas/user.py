@@ -14,7 +14,7 @@ class _UserBase(_BaseSchema):
 
 class User(_UserBase):
   servers: List[Server] = []
-  id: int
+  id: str  # Changed from int to str to match UUID
 
 
 class UserCreate(_UserBase):

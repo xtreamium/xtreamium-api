@@ -42,7 +42,7 @@ async def get_current_user(
       raise fastapi.HTTPException(status_code=401, detail="User not found")
 
     logger.debug(f"Token validated successfully for user: {user.email}")
-    return UserSchema.from_orm(user)
+    return UserSchema.model_validate(user)
 
   except jwt.ExpiredSignatureError:
     logger.warning("JWT token expired")
@@ -93,7 +93,7 @@ async def authenticate_user(email: str, password: str, db: orm.Session):
 async def create_token(user: User):
   logger.debug(f"Creating JWT token for user: {user.email}")
   try:
-    user_obj = UserSchema.from_orm(user)
+    user_obj = UserSchema.model_validate(user)
     token = jwt.encode({"id": user.id}, settings.JWT_SECRET)
     logger.debug(f"JWT token created successfully for user: {user.email}")
     return {"access_token": token, "token_type": "bearer"}
