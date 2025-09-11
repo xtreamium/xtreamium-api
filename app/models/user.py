@@ -9,7 +9,7 @@ from app import database
 
 class User(database.Base):
   class Config:
-    orm_mode = True
+    from_attributes = True
 
   __tablename__ = "users"
   id = sa.Column(sa.Integer, primary_key=True, index=True)

@@ -1,15 +1,26 @@
 import logging
+import os
 import sys
+from typing import Optional
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+def get_logger(name: Optional[str] = None) -> logging.Logger:
+    logger = logging.getLogger(name or __name__)
+    if getattr(logger, '_xtreamium_configured', False):
+        return logger
 
-formatter = logging.Formatter(
-  fmt='%(levelname)s %(asctime)s %(message)s'
-)
-stream_handler = logging.StreamHandler(sys.stdout)
-file_handler = logging.FileHandler("/tmp/xtreamium.log")
-stream_handler.setFormatter(formatter)
-file_handler.setFormatter(formatter)
+    log_level = os.getenv('XTREAMIUM_LOG_LEVEL', 'INFO').upper()
+    log_file = os.getenv('XTREAMIUM_LOG_FILE', '/tmp/xtreamium.log')
 
-logger.handlers = [stream_handler, file_handler]
+    formatter = logging.Formatter(
+        fmt='%(levelname)s %(asctime)s [%(name)s] %(message)s'
+    )
+    stream_handler = logging.StreamHandler(sys.stdout)
+    file_handler = logging.FileHandler(log_file)
+    stream_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
+
+    logger.setLevel(log_level)
+    logger.addHandler(stream_handler)
+    logger.addHandler(file_handler)
+    logger._xtreamium_configured = True
+    return logger
