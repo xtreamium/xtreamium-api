@@ -31,7 +31,6 @@ class EPGParser:
                 file.write(data.content)
 
         logger.debug("Parsing EPG")
-
         self._programs = xmltv.read_programmes(open(self._cache_file, 'r'))
         logger.debug("EPG parsed")
 
