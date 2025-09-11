@@ -5,21 +5,17 @@ from pydantic.v1 import BaseSettings
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Xtreamium Backend"
-    API_PATH: str = "/api/v1"
-    JWT_SECRET: str = "446974df0ad13e965b7b3a169aa82f08d07bf12a9feb3696e25844c0c677720e"
+  PROJECT_NAME: str = "Xtreamium Backend"
+  API_PATH: str = "/api/v1"
+  JWT_SECRET: str = "446974df0ad13e965b7b3a169aa82f08d07bf12a9feb3696e25844c0c677720e"
 
-    # TODO: need to make this a per-user cache
-    EPG_URL = AnyHttpUrl(
-        "http://sr71.biz/xmltv.php?username=Juicy5Bus&password=zYhuTE4qte"
-    )
-    BACKEND_CORS_ORIGINS: List = [
-        "https://xtreamium.dev.fergl.ie:3000",
-        "https://streams.dev.fergl.ie:3000",
-        "https://streams.ferg.al",
-        "http://127.0.0.1:35729",
-        "http://localhost:35729",
-    ]
+  BACKEND_CORS_ORIGINS: List = [
+    "https://xtreamium.dev.fergl.ie:3000",
+    "https://streams.dev.fergl.ie:3000",
+    "https://streams.ferg.al",
+    "http://127.0.0.1:35729",
+    "http://localhost:35729",
+  ]
 
 
 settings = Settings()
