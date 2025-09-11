@@ -5,12 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78bbc393-6fd2-4625-a881-ca68a7cd45e5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/api/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/migrations/001_migrate_user_id_to_uuid.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/epg.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/epg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/data/user_data_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/data/user_data_services.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/tasks/register_tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/tasks/register_tasks.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/tasks/update_epg.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/tasks/update_epg.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/utils/epg_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/epg_parser.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -51,6 +53,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "FastAPI.Unnamed.executor": "Debug",
+    "Python.001_migrate_user_id_to_uuid.executor": "Debug",
     "Python.main.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -80,6 +83,29 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.main">
+    <configuration name="001_migrate_user_id_to_uuid" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="xtreamium-backend" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/migrations" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/migrations/001_migrate_user_id_to_uuid.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="xtreamium-backend" />
       <option name="ENV_FILES" value="" />
@@ -141,11 +167,13 @@
     </configuration>
     <list>
       <item itemvalue="FastAPI.Unnamed" />
+      <item itemvalue="Python.001_migrate_user_id_to_uuid" />
       <item itemvalue="Python.main" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.001_migrate_user_id_to_uuid" />
       </list>
     </recent_temporary>
   </component>
@@ -219,7 +247,7 @@
       <workItem from="1757521885042" duration="606000" />
       <workItem from="1757530769019" duration="2610000" />
       <workItem from="1757619611870" duration="3738000" />
-      <workItem from="1757628595904" duration="2213000" />
+      <workItem from="1757628595904" duration="4366000" />
     </task>
     <servers />
   </component>
@@ -241,9 +269,24 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app/services/tasks/update_epg.py</url>
-          <line>17</line>
-          <option name="timeStamp" value="20" />
+          <url>file://$PROJECT_DIR$/migrations/001_migrate_user_id_to_uuid.py</url>
+          <line>19</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/utils/epg_parser.py</url>
+          <line>41</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/utils/epg_parser.py</url>
+          <line>39</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/utils/epg_parser.py</url>
+          <line>37</line>
+          <option name="timeStamp" value="28" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -257,6 +300,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/xtreamium_backend$Unnamed.coverage" NAME="Unnamed Coverage Results" MODIFIED="1716072845200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/xtreamium_backend$main.coverage" NAME="main Coverage Results" MODIFIED="1757631270597" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/xtreamium_backend$main.coverage" NAME="main Coverage Results" MODIFIED="1757633383695" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/xtreamium_backend$001_migrate_user_id_to_uuid.coverage" NAME="001_migrate_user_id_to_uuid Coverage Results" MODIFIED="1757632065309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/migrations" />
   </component>
 </project>

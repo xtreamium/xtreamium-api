@@ -12,7 +12,7 @@ class Server(database.Base):
 
   __tablename__ = "servers"
   id = sa.Column(sa.Integer, primary_key=True, index=True)
-  owner_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"), nullable=False)
+  owner_id = sa.Column(sa.String(36), sa.ForeignKey("users.id"), nullable=False)
   name = sa.Column(sa.String, unique=True, index=True)
   url = sa.Column(sa.String, index=True)
   username = sa.Column(sa.String, index=True)

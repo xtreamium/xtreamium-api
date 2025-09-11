@@ -1,4 +1,5 @@
 import datetime as dt
+import uuid
 
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
@@ -12,7 +13,8 @@ class User(database.Base):
     from_attributes = True
 
   __tablename__ = "users"
-  id = sa.Column(sa.Integer, primary_key=True, index=True)
+  id = sa.Column(sa.String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+
   email = sa.Column(sa.String, unique=True, index=True)
   hashed_password = sa.Column(sa.String)
 
