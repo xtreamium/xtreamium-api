@@ -13,7 +13,7 @@ logger = get_logger(__name__)
 
 
 class EPGParser:
-  def __init__(self, url):
+  def __init__(self, url, server, user):
     self._epg_url = url
     self._programs = {}
     cache_dir = (os.getenv("CACHE_PATH") or
@@ -21,7 +21,7 @@ class EPGParser:
     if not os.path.exists(cache_dir):
       os.makedirs(cache_dir)
 
-    self._cache_file = os.path.join(cache_dir, "epg.xml")
+    self._cache_file = os.path.join(cache_dir, f"{user}", server, "epg.xml")
 
   def cache_epg(self):
     if not os.path.isfile(self._cache_file) or is_file_older_cache_time(self._cache_file):
@@ -38,6 +38,3 @@ class EPGParser:
     listings = [d for d in self._programs if d['channel'] ==
                 channel_id and d['stop'] > int(time.time())]
     return listings
-
-
-epg_parser = EPGParser(settings.EPG_URL)
