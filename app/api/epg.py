@@ -2,7 +2,6 @@ from fastapi import APIRouter, Request, HTTPException
 
 from app.services.logger import get_logger
 from app.utils.XTream import XTream
-from app.utils.epg_parser import epg_parser
 
 logger = get_logger(__name__)
 router = APIRouter()
