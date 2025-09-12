@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78bbc393-6fd2-4625-a881-ca68a7cd45e5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/models/epg.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/data/epg_data_services.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/migrations/002_create_epg_table.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/migrations/migration_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/tasks/update_epg.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/tasks/update_epg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/data/epg_data_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/data/epg_data_services.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/utils/epg_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/epg_parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/001_migrate_user_id_to_uuid.py" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/001_migrate_user_id_to_uuid.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utils/xmltv.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,31 +49,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "FastAPI.Unnamed.executor": "Debug",
-    "Python.001_migrate_user_id_to_uuid.executor": "Debug",
-    "Python.002_create_epg_table.executor": "Debug",
-    "Python.main.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "@feature/per-user-epg",
-    "last_opened_file_path": "/srv/dev/disco-hue/disco-hue.sln",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;FastAPI.Unnamed.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.001_migrate_user_id_to_uuid.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.002_create_epg_table.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.main.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;@feature/per-user-epg&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/srv/dev/disco-hue/disco-hue.sln&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "sqlite"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/api" />
@@ -277,6 +273,7 @@
       <workItem from="1757530769019" duration="2610000" />
       <workItem from="1757619611870" duration="3738000" />
       <workItem from="1757628595904" duration="6467000" />
+      <workItem from="1757688125745" duration="1481000" />
     </task>
     <servers />
   </component>
@@ -299,7 +296,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app/utils/epg_parser.py</url>
-          <line>45</line>
+          <line>48</line>
           <option name="timeStamp" value="36" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -309,7 +306,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app/utils/epg_parser.py</url>
-          <line>32</line>
+          <line>33</line>
           <option name="timeStamp" value="38" />
         </line-breakpoint>
       </breakpoints>

@@ -3,8 +3,8 @@ from typing import List, Optional
 import sqlalchemy.orm as orm
 
 from app.models.channel import Channel
-from app.models.programme import Programme
-from app.utils.iptv_parser_ng import Channel as XMLTVChannel, Programme as XMLTVProgramme
+from app.models.program import Program
+from app.utils.iptv_parser_ng import Channel as XMLTVChannel, Program as XMLTVProgram
 from app.services.logger import get_logger
 
 logger = get_logger(__name__)
@@ -92,16 +92,16 @@ async def store_epg_channels(channels: List[XMLTVChannel], user_id: str, server_
         raise
 
 
-def _create_programme_from_xmltv(xmltv_programme: XMLTVProgramme, channel_id: int) -> Programme:
+def _create_program_from_xmltv(xmltv_program: XMLTVProgram, channel_id: int) -> Program:
     """
-    Convert an XMLTV Programme object to a database Programme object
+    Convert an XMLTV Program object to a database Program object
     
     Args:
-        xmltv_programme: Programme object from XMLTV parser
-        channel_id: Database ID of the channel this programme belongs to
+        xmltv_program: Program object from XMLTV parser
+        channel_id: Database ID of the channel this program belongs to
         
     Returns:
-        Programme: Database Programme object ready to be stored
+        Program: Database Program object ready to be stored
     """
     db_programme = Programme(
         channel_id=channel_id,
