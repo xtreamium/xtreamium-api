@@ -19,136 +19,142 @@ oauth2schema = security.OAuth2PasswordBearer(tokenUrl="/api/v2/user/token")
 
 
 async def get_user_by_email(email: str, db: orm.Session):
-  logger.debug(f"Looking up user by email: {email}")
-  user = db.query(User).filter(User.email == email).first()
-  if user:
-    logger.debug(f"User found: {email}")
-  else:
-    logger.debug(f"User not found: {email}")
-  return user
+    logger.debug(f"Looking up user by email: {email}")
+    user = db.query(User).filter(User.email == email).first()
+    if user:
+        logger.debug(f"User found: {email}")
+    else:
+        logger.debug(f"User not found: {email}")
+    return user
 
 
 async def get_current_user(
-  db: orm.Session = fastapi.Depends(get_db),
-  token: str = fastapi.Depends(oauth2schema),
+    db: orm.Session = fastapi.Depends(get_db),
+    token: str = fastapi.Depends(oauth2schema),
 ):
-  logger.debug("Validating JWT token for current user")
-  try:
-    payload = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
-    user = db.query(User).get(payload["id"])
+    logger.debug("Validating JWT token for current user")
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
+        user = db.query(User).get(payload["id"])
 
-    if not user:
-      logger.warning(f"Token valid but user not found for ID: {payload['id']}")
-      raise fastapi.HTTPException(status_code=401, detail="User not found")
+        if not user:
+            logger.warning(
+                f"Token valid but user not found for ID: {payload['id']}")
+            raise fastapi.HTTPException(
+                status_code=401, detail="User not found")
 
-    logger.debug(f"Token validated successfully for user: {user.email}")
-    return UserSchema.model_validate(user)
+        logger.debug(f"Token validated successfully for user: {user.email}")
+        return UserSchema.model_validate(user)
 
-  except jwt.ExpiredSignatureError:
-    logger.warning("JWT token expired")
-    raise fastapi.HTTPException(status_code=401, detail="Token expired")
-  except jwt.InvalidTokenError as e:
-    logger.warning(f"Invalid JWT token: {e}")
-    raise fastapi.HTTPException(status_code=401, detail="Invalid token")
-  except Exception as e:
-    logger.error(f"Error validating token: {e}")
-    raise fastapi.HTTPException(status_code=401, detail="Invalid Email or Password")
+    except jwt.ExpiredSignatureError:
+        logger.warning("JWT token expired")
+        raise fastapi.HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError as e:
+        logger.warning(f"Invalid JWT token: {e}")
+        raise fastapi.HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        logger.error(f"Error validating token: {e}")
+        raise fastapi.HTTPException(
+            status_code=401, detail="Invalid Email or Password")
 
 
 async def create_user(user: UserCreate, db: orm.Session):
-  logger.info(f"Creating new user in database: {user.email}")
-  try:
-    hashed_password = passlib_hash.bcrypt.hash(user.password)
-    db_user = User(email=user.email, hashed_password=hashed_password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    logger.info(f"User created successfully in database: {user.email}")
-    return db_user
-  except Exception as e:
-    logger.error(f"Failed to create user in database {user.email}: {e}")
-    db.rollback()
-    raise
+    logger.info(f"Creating new user in database: {user.email}")
+    try:
+        hashed_password = passlib_hash.bcrypt.hash(user.password)
+        db_user = User(email=user.email, hashed_password=hashed_password)
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        logger.info(f"User created successfully in database: {user.email}")
+        return db_user
+    except Exception as e:
+        logger.error(f"Failed to create user in database {user.email}: {e}")
+        db.rollback()
+        raise
 
 
 async def authenticate_user(email: str, password: str, db: orm.Session):
-  logger.debug(f"Authenticating user: {email}")
-  try:
-    user = await get_user_by_email(email, db)
-    if not user:
-      logger.warning(f"Authentication failed - user not found: {email}")
-      return False
+    logger.debug(f"Authenticating user: {email}")
+    try:
+        user = await get_user_by_email(email, db)
+        if not user:
+            logger.warning(f"Authentication failed - user not found: {email}")
+            return False
 
-    if not passlib_hash.bcrypt.verify(password, user.hashed_password):
-      logger.warning(f"Authentication failed - invalid password: {email}")
-      return False
+        if not passlib_hash.bcrypt.verify(password, user.hashed_password):
+            logger.warning(
+                f"Authentication failed - invalid password: {email}")
+            return False
 
-    logger.info(f"User authenticated successfully: {email}")
-    return user
-  except Exception as e:
-    logger.error(f"Error during authentication for {email}: {e}")
-    return False
+        logger.info(f"User authenticated successfully: {email}")
+        return user
+    except Exception as e:
+        logger.error(f"Error during authentication for {email}: {e}")
+        return False
 
 
 async def create_token(user: User):
-  logger.debug(f"Creating JWT token for user: {user.email}")
-  try:
-    user_obj = UserSchema.model_validate(user)
-    token = jwt.encode({"id": user.id}, settings.JWT_SECRET)
-    logger.debug(f"JWT token created successfully for user: {user.email}")
-    return {"access_token": token, "token_type": "bearer"}
-  except Exception as e:
-    logger.error(f"Failed to create token for user {user.email}: {e}")
-    raise
+    logger.debug(f"Creating JWT token for user: {user.email}")
+    try:
+        user_obj = UserSchema.model_validate(user)
+        token = jwt.encode({"id": user.id}, settings.JWT_SECRET)
+        logger.debug(f"JWT token created successfully for user: {user.email}")
+        return {"access_token": token, "token_type": "bearer"}
+    except Exception as e:
+        logger.error(f"Failed to create token for user {user.email}: {e}")
+        raise
 
 
-async def get_user_servers(user_id: int, db: orm.Session):
-  logger.debug(f"Fetching servers for user ID: {user_id}")
-  try:
-    servers = db.query(Server).filter(Server.owner_id == user_id).all()
-    logger.debug(f"Found {len(servers)} servers for user ID: {user_id}")
-    return servers
-  except Exception as e:
-    logger.error(f"Failed to fetch servers for user ID {user_id}: {e}")
-    raise
+async def get_user_servers(user_id: str, db: orm.Session):
+    logger.debug(f"Fetching servers for user ID: {user_id}")
+    try:
+        servers = db.query(Server).filter(Server.owner_id == user_id).all()
+        logger.debug(f"Found {len(servers)} servers for user ID: {user_id}")
+        return servers
+    except Exception as e:
+        logger.error(f"Failed to fetch servers for user ID {user_id}: {e}")
+        raise
 
 
-async def create_server(server: ServerCreate, user_id: int, db: orm.Session):
-  logger.info(f"Creating server '{server.name}' for user ID: {user_id}")
-  try:
-    db_server = Server(**server.dict(), user_id=user_id)
-    db.add(db_server)
-    db.commit()
-    db.refresh(db_server)
-    logger.info(f"Server '{server.name}' created successfully for user ID: {user_id}")
-    return db_server
-  except Exception as e:
-    logger.error(f"Failed to create server '{server.name}' for user ID {user_id}: {e}")
-    db.rollback()
-    raise
+async def create_server(server: ServerCreate, user_id: str, db: orm.Session):
+    logger.info(f"Creating server '{server.name}' for user ID: {user_id}")
+    try:
+        db_server = Server(**server.dict(), user_id=user_id)
+        db.add(db_server)
+        db.commit()
+        db.refresh(db_server)
+        logger.info(
+            f"Server '{server.name}' created successfully for user ID: {user_id}")
+        return db_server
+    except Exception as e:
+        logger.error(
+            f"Failed to create server '{server.name}' for user ID {user_id}: {e}")
+        db.rollback()
+        raise
 
 
 async def delete_server(server_id: int, db: orm.Session):
-  logger.info(f"Deleting server ID: {server_id}")
-  try:
-    result = db.query(Server).filter(Server.id == server_id).delete()
-    db.commit()
-    if result:
-      logger.info(f"Server ID {server_id} deleted successfully")
-    else:
-      logger.warning(f"Server ID {server_id} not found for deletion")
-  except Exception as e:
-    logger.error(f"Failed to delete server ID {server_id}: {e}")
-    db.rollback()
-    raise
+    logger.info(f"Deleting server ID: {server_id}")
+    try:
+        result = db.query(Server).filter(Server.id == server_id).delete()
+        db.commit()
+        if result:
+            logger.info(f"Server ID {server_id} deleted successfully")
+        else:
+            logger.warning(f"Server ID {server_id} not found for deletion")
+    except Exception as e:
+        logger.error(f"Failed to delete server ID {server_id}: {e}")
+        db.rollback()
+        raise
 
 
 async def get_all_users(db: orm.Session):
-  logger.debug("Fetching all users from database")
-  try:
-    users = db.query(User).all()
-    logger.debug(f"Found {len(users)} users in database")
-    return users
-  except Exception as e:
-    logger.error(f"Failed to fetch all users: {e}")
-    raise
+    logger.debug("Fetching all users from database")
+    try:
+        users = db.query(User).all()
+        logger.debug(f"Found {len(users)} users in database")
+        return users
+    except Exception as e:
+        logger.error(f"Failed to fetch all users: {e}")
+        raise
