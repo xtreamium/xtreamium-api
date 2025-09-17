@@ -3,6 +3,7 @@ import os
 import sys
 from typing import Optional
 
+
 def get_logger(name: Optional[str] = None) -> logging.Logger:
     logger = logging.getLogger(name or __name__)
     if getattr(logger, '_xtreamium_configured', False):

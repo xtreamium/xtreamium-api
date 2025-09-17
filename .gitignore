@@ -153,4 +153,6 @@ dmypy.json
 cython_debug/
 
 .idea/
+.working/
 xtreamium.db
+app/xtreamium.db
