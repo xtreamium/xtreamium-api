@@ -1,17 +1,18 @@
 from app import database
-from app.models import user, server
 from app.services.logger import get_logger
+from app.services.migration_service import run_migrations
 
 logger = get_logger(__name__)
 
 
 def create_database():
-    logger.info("Creating database tables...")
+    """Initialize database using Alembic migrations"""
+    logger.info("Initializing database with migrations...")
     try:
-        database.Base.metadata.create_all(bind=database.engine)
-        logger.info("Database tables created successfully")
+        run_migrations()
+        logger.info("Database initialized successfully")
     except Exception as e:
-        logger.error(f"Failed to create database tables: {e}")
+        logger.error(f"Failed to initialize database: {e}")
         raise
 
 

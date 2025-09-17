@@ -1,15 +1,14 @@
 import fastapi
-import sqlalchemy.orm as orm
-import jwt
 import fastapi.security as security
+import jwt
+import passlib.hash as passlib_hash
+import sqlalchemy.orm as orm
 
 from app.models.server import Server
 from app.models.user import User
-from app.schemas.user import User as UserSchema
 from app.schemas.server import ServerCreate as ServerCreate
+from app.schemas.user import User as UserSchema
 from app.schemas.user import UserCreate
-import passlib.hash as passlib_hash
-
 from app.services.config import settings
 from app.services.db_factory import get_db
 from app.services.logger import get_logger
@@ -38,11 +37,13 @@ async def get_current_user(
         user = db.query(User).get(payload["id"])
 
         if not user:
-            logger.warning(f"Token valid but user not found for ID: {payload['id']}")
-            raise fastapi.HTTPException(status_code=401, detail="User not found")
+            logger.warning(
+                f"Token valid but user not found for ID: {payload['id']}")
+            raise fastapi.HTTPException(
+                status_code=401, detail="User not found")
 
         logger.debug(f"Token validated successfully for user: {user.email}")
-        return UserSchema.from_orm(user)
+        return UserSchema.model_validate(user)
 
     except jwt.ExpiredSignatureError:
         logger.warning("JWT token expired")
@@ -52,7 +53,8 @@ async def get_current_user(
         raise fastapi.HTTPException(status_code=401, detail="Invalid token")
     except Exception as e:
         logger.error(f"Error validating token: {e}")
-        raise fastapi.HTTPException(status_code=401, detail="Invalid Email or Password")
+        raise fastapi.HTTPException(
+            status_code=401, detail="Invalid Email or Password")
 
 
 async def create_user(user: UserCreate, db: orm.Session):
@@ -80,7 +82,8 @@ async def authenticate_user(email: str, password: str, db: orm.Session):
             return False
 
         if not passlib_hash.bcrypt.verify(password, user.hashed_password):
-            logger.warning(f"Authentication failed - invalid password: {email}")
+            logger.warning(
+                f"Authentication failed - invalid password: {email}")
             return False
 
         logger.info(f"User authenticated successfully: {email}")
@@ -93,7 +96,7 @@ async def authenticate_user(email: str, password: str, db: orm.Session):
 async def create_token(user: User):
     logger.debug(f"Creating JWT token for user: {user.email}")
     try:
-        user_obj = UserSchema.from_orm(user)
+        user_obj = UserSchema.model_validate(user)
         token = jwt.encode({"id": user.id}, settings.JWT_SECRET)
         logger.debug(f"JWT token created successfully for user: {user.email}")
         return {"access_token": token, "token_type": "bearer"}
@@ -102,10 +105,10 @@ async def create_token(user: User):
         raise
 
 
-async def get_user_servers(user_id: int, db: orm.Session):
+async def get_user_servers(user_id: str, db: orm.Session):
     logger.debug(f"Fetching servers for user ID: {user_id}")
     try:
-        servers = db.query(Server).filter(Server.user_id == user_id).all()
+        servers = db.query(Server).filter(Server.owner_id == user_id).all()
         logger.debug(f"Found {len(servers)} servers for user ID: {user_id}")
         return servers
     except Exception as e:
@@ -113,22 +116,24 @@ async def get_user_servers(user_id: int, db: orm.Session):
         raise
 
 
-async def create_server(server: ServerCreate, user_id: int, db: orm.Session):
+async def create_server(server: ServerCreate, user_id: str, db: orm.Session):
     logger.info(f"Creating server '{server.name}' for user ID: {user_id}")
     try:
-        db_server = Server(**server.dict(), user_id=user_id)
+        db_server = Server(**server.dict(), owner_id=user_id)
         db.add(db_server)
         db.commit()
         db.refresh(db_server)
-        logger.info(f"Server '{server.name}' created successfully for user ID: {user_id}")
+        logger.info(
+            f"Server '{server.name}' created successfully for user ID: {user_id}")
         return db_server
     except Exception as e:
-        logger.error(f"Failed to create server '{server.name}' for user ID {user_id}: {e}")
+        logger.error(
+            f"Failed to create server '{server.name}' for user ID {user_id}: {e}")
         db.rollback()
         raise
 
 
-async def delete_server(server_id: int, db: orm.Session):
+async def delete_server(server_id: str, db: orm.Session):
     logger.info(f"Deleting server ID: {server_id}")
     try:
         result = db.query(Server).filter(Server.id == server_id).delete()
@@ -140,4 +145,15 @@ async def delete_server(server_id: int, db: orm.Session):
     except Exception as e:
         logger.error(f"Failed to delete server ID {server_id}: {e}")
         db.rollback()
+        raise
+
+
+async def get_all_users(db: orm.Session):
+    logger.debug("Fetching all users from database")
+    try:
+        users = db.query(User).all()
+        logger.debug(f"Found {len(users)} users in database")
+        return users
+    except Exception as e:
+        logger.error(f"Failed to fetch all users: {e}")
         raise

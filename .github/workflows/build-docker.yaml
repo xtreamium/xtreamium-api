@@ -2,8 +2,8 @@ name: Docker Image
 
 on:
   push:
-#    branches:
-#      - trunk
+    #    branches:
+    #      - trunk
     tags:
       - "v*.*.*"
 
