@@ -7,17 +7,17 @@ from app.schemas.server import Server
 
 
 class _UserBase(_BaseSchema):
-  model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
-  email: str
+    email: str
 
 
 class User(_UserBase):
-  servers: List[Server] = []
-  id: str  # Changed from int to str to match UUID
+    servers: List[Server] = []
+    id: str  # Changed from int to str to match UUID
 
 
 class UserCreate(_UserBase):
-  hashed_password: str
+    hashed_password: str
 
-  password: str
+    password: str

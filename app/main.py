@@ -1,10 +1,10 @@
-import os
 import logging
+import os
 
-from app.services.logger import get_logger
-from app.services.tasks.register_tasks import register_tasks
 from app.services.app_factory import create_app
 from app.services.db_factory import create_database
+from app.services.logger import get_logger
+from app.services.tasks.register_tasks import register_tasks
 
 logger = get_logger(__name__)
 

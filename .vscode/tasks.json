@@ -1,24 +1,26 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "activate-venv-and-run",
-            "type": "shell",
-            "command": "${workspaceFolder}/.venv/bin/python",
-            "args": ["${workspaceFolder}/app/main.py"],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "options": {
-                "cwd": "${workspaceFolder}",
-                "env": {
-                    "PYTHONPATH": "${workspaceFolder}"
-                }
-            }
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "activate-venv-and-run",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": [
+        "${workspaceFolder}/app/main.py"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}"
         }
-    ]
+      }
+    }
+  ]
 }

@@ -13,17 +13,12 @@ class Programme(database.Base):
 
     __tablename__ = "programmes"
 
-    # Primary key
     id = sa.Column(sa.Integer, primary_key=True, index=True)
 
-    # Foreign key to channel
     channel_id = sa.Column(sa.Integer, sa.ForeignKey(
         "channels.id"), nullable=False)
 
-    # Core programme data
-    # XMLTV format: "20240901120000 +0000"
     start_time = sa.Column(sa.String, nullable=False, index=True)
-    # XMLTV format: "20240901130000 +0000"
     stop_time = sa.Column(sa.String, nullable=True, index=True)
 
     # Optional programme attributes
@@ -35,38 +30,27 @@ class Programme(database.Base):
 
     # Programme content - stored as JSON for flexibility
     titles = sa.Column(sa.Text, nullable=True)  # JSON array of title data
-    # JSON array of subtitle data
     sub_titles = sa.Column(sa.Text, nullable=True)
-    # JSON array of description data
     descriptions = sa.Column(sa.Text, nullable=True)
     credits = sa.Column(sa.Text, nullable=True)  # JSON object of credits data
     date = sa.Column(sa.String, nullable=True)  # Programme date
-    # JSON array of category data
     categories = sa.Column(sa.Text, nullable=True)
     keywords = sa.Column(sa.Text, nullable=True)  # JSON array of keyword data
-    # JSON object of language data
     language = sa.Column(sa.Text, nullable=True)
-    # JSON object of original language data
     orig_language = sa.Column(sa.Text, nullable=True)
     length = sa.Column(sa.Text, nullable=True)  # JSON object of length data
     icons = sa.Column(sa.Text, nullable=True)  # JSON array of icon data
     urls = sa.Column(sa.Text, nullable=True)  # JSON array of URL data
     countries = sa.Column(sa.Text, nullable=True)  # JSON array of country data
-    # JSON array of episode number data
     episode_nums = sa.Column(sa.Text, nullable=True)
     video = sa.Column(sa.Text, nullable=True)  # JSON object of video data
     audio = sa.Column(sa.Text, nullable=True)  # JSON object of audio data
-    # JSON object of previously shown data
     previously_shown = sa.Column(sa.Text, nullable=True)
-    # JSON object of premiere data
     premiere = sa.Column(sa.Text, nullable=True)
-    # JSON object of last chance data
     last_chance = sa.Column(sa.Text, nullable=True)
     new = sa.Column(sa.Boolean, default=False)  # New programme flag
-    # JSON array of subtitle data
     subtitles = sa.Column(sa.Text, nullable=True)
     ratings = sa.Column(sa.Text, nullable=True)  # JSON array of rating data
-    # JSON array of star rating data
     star_ratings = sa.Column(sa.Text, nullable=True)
     reviews = sa.Column(sa.Text, nullable=True)  # JSON array of review data
     images = sa.Column(sa.Text, nullable=True)  # JSON array of image data
@@ -95,6 +79,28 @@ class Programme(database.Base):
     def set_titles(self, titles):
         """Store titles as JSON"""
         self.titles = json.dumps(titles)
+
+    def get_default_title(self):
+        """Return the first titles entry's text as default title"""
+        titles = self.get_titles()
+        if titles and isinstance(titles, list) and len(titles) > 0:
+            first_title = titles[0]
+            if isinstance(first_title, dict) and 'text' in first_title:
+                return first_title['text']
+            elif isinstance(first_title, str):
+                return first_title
+        return ""
+
+    def get_default_description(self):
+        """Return the first descriptions entry's text as default description"""
+        descriptions = self.get_descriptions()
+        if descriptions and isinstance(descriptions, list) and len(descriptions) > 0:
+            first_desc = descriptions[0]
+            if isinstance(first_desc, dict) and 'text' in first_desc:
+                return first_desc['text']
+            elif isinstance(first_desc, str):
+                return first_desc
+        return ""
 
     def get_descriptions(self):
         """Return parsed descriptions as Python objects"""

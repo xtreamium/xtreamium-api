@@ -5,11 +5,48 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78bbc393-6fd2-4625-a881-ca68a7cd45e5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/services/migration_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/utils/xmltv.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/migrations/env.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/migrate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/copilot-instructions.md" beforeDir="false" afterPath="$PROJECT_DIR$/.github/copilot-instructions.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/build-docker.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/build-docker.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/epg.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/epg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/ping.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/channel.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/channel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/epg.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/epg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/programme.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/programme.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/data/epg_data_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/data/epg_data_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/data/user_data_services.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/data/user_data_services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/db_factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/db_factory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/logger.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/tasks/update_epg.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/tasks/update_epg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utils/XTream.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/XTream.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utils/cache.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/cache.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/utils/epg_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/epg_parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/utils/xmltv.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utils/iptv_parser_ng.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/iptv_parser_ng.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/utils/time_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/utils/time_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/001_migrate_user_id_to_uuid.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/002_create_epg_table.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/003_create_channels_and_programmes_tables.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/migration_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,31 +86,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;FastAPI.Unnamed.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.001_migrate_user_id_to_uuid.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.002_create_epg_table.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.main.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;@feature/per-user-epg&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/srv/dev/disco-hue/disco-hue.sln&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "FastAPI.Unnamed.executor": "Debug",
+    "Python.001_migrate_user_id_to_uuid.executor": "Debug",
+    "Python.002_create_epg_table.executor": "Debug",
+    "Python.main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHELLCHECK.PATH": "/home/fergalm/.local/share/JetBrains/PyCharm2024.3/Shell Script/shellcheck",
+    "git-widget-placeholder": "@feature/per-user-epg",
+    "last_opened_file_path": "/srv/dev/disco-hue/disco-hue.sln",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "debugger.dataViews.python.type.renderers",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;sqlite&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlite"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/api" />
@@ -205,8 +244,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-PY-252.26199.25" />
-        <option value="bundled-python-sdk-ac7cc7082f2d-c6efb3732140-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.26199.25" />
+        <option value="bundled-js-predefined-d6986cc7102b-bcbf228cf9b6-JavaScript-PY-253.17525.96" />
+        <option value="bundled-python-sdk-d413fb44371e-bfba2533656c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.17525.96" />
       </set>
     </attachedChunks>
   </component>
@@ -273,7 +312,12 @@
       <workItem from="1757530769019" duration="2610000" />
       <workItem from="1757619611870" duration="3738000" />
       <workItem from="1757628595904" duration="6467000" />
-      <workItem from="1757688125745" duration="1481000" />
+      <workItem from="1757688125745" duration="11065000" />
+      <workItem from="1757778492236" duration="1805000" />
+      <workItem from="1757781804399" duration="9304000" />
+      <workItem from="1757954152243" duration="2904000" />
+      <workItem from="1758014899364" duration="661000" />
+      <workItem from="1758126510141" duration="2696000" />
     </task>
     <servers />
   </component>
@@ -295,19 +339,19 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app/utils/epg_parser.py</url>
-          <line>48</line>
-          <option name="timeStamp" value="36" />
+          <url>file://$PROJECT_DIR$/.working/iptv_parser_ng.py</url>
+          <line>451</line>
+          <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app/utils/epg_parser.py</url>
-          <line>54</line>
-          <option name="timeStamp" value="37" />
+          <line>57</line>
+          <option name="timeStamp" value="54" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app/utils/epg_parser.py</url>
-          <line>33</line>
-          <option name="timeStamp" value="38" />
+          <line>64</line>
+          <option name="timeStamp" value="56" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -321,8 +365,8 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/xtreamium_backend$Unnamed.coverage" NAME="Unnamed Coverage Results" MODIFIED="1716072845200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/xtreamium_backend$main.coverage" NAME="main Coverage Results" MODIFIED="1757635497254" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
     <SUITE FILE_PATH="coverage/xtreamium_backend$002_create_epg_table.coverage" NAME="002_create_epg_table Coverage Results" MODIFIED="1757635046783" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/migrations" />
+    <SUITE FILE_PATH="coverage/xtreamium_backend$main.coverage" NAME="main Coverage Results" MODIFIED="1758126706298" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
     <SUITE FILE_PATH="coverage/xtreamium_backend$001_migrate_user_id_to_uuid.coverage" NAME="001_migrate_user_id_to_uuid Coverage Results" MODIFIED="1757632065309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/migrations" />
   </component>
 </project>
