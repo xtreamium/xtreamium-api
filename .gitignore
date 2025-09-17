@@ -152,7 +152,8 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-.idea/
+.idea
+.vscode
 .working/
 xtreamium.db
 app/xtreamium.db
