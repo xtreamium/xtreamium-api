@@ -1,15 +1,14 @@
 import fastapi
-import sqlalchemy.orm as orm
-import jwt
 import fastapi.security as security
+import jwt
+import passlib.hash as passlib_hash
+import sqlalchemy.orm as orm
 
 from app.models.server import Server
 from app.models.user import User
-from app.schemas.user import User as UserSchema
 from app.schemas.server import ServerCreate as ServerCreate
+from app.schemas.user import User as UserSchema
 from app.schemas.user import UserCreate
-import passlib.hash as passlib_hash
-
 from app.services.config import settings
 from app.services.db_factory import get_db
 from app.services.logger import get_logger
@@ -120,7 +119,7 @@ async def get_user_servers(user_id: str, db: orm.Session):
 async def create_server(server: ServerCreate, user_id: str, db: orm.Session):
     logger.info(f"Creating server '{server.name}' for user ID: {user_id}")
     try:
-        db_server = Server(**server.dict(), user_id=user_id)
+        db_server = Server(**server.dict(), owner_id=user_id)
         db.add(db_server)
         db.commit()
         db.refresh(db_server)
@@ -134,7 +133,7 @@ async def create_server(server: ServerCreate, user_id: str, db: orm.Session):
         raise
 
 
-async def delete_server(server_id: int, db: orm.Session):
+async def delete_server(server_id: str, db: orm.Session):
     logger.info(f"Deleting server ID: {server_id}")
     try:
         result = db.query(Server).filter(Server.id == server_id).delete()

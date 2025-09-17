@@ -1,2 +1,2 @@
 class Cache:
-  auth_data = {}
+    auth_data = {}

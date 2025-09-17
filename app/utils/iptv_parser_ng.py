@@ -1,6 +1,6 @@
-from typing import List, Optional, Dict, Any
 from dataclasses import dataclass, field
-from datetime import datetime
+from typing import List, Optional, Dict, Any
+
 import lxml.etree as ET
 
 
@@ -72,14 +72,18 @@ class XMLTVParser:
                 if event == 'end':
                     if elem.tag == 'channel':
                         self._parse_channel(elem)
+                        # Clear the element to free memory AFTER parsing
+                        elem.clear()
+                        # Also eliminate now-empty references from the root node
+                        while elem.getprevious() is not None:
+                            del elem.getparent()[0]
                     elif elem.tag == 'programme':
                         self._parse_programme(elem)
-
-                    # Clear the element to free memory
-                    elem.clear()
-                    # Also eliminate now-empty references from the root node
-                    while elem.getprevious() is not None:
-                        del elem.getparent()[0]
+                        # Clear the element to free memory AFTER parsing
+                        elem.clear()
+                        # Also eliminate now-empty references from the root node
+                        while elem.getprevious() is not None:
+                            del elem.getparent()[0]
 
             return list(self.channels.values())
 
@@ -420,7 +424,6 @@ class XMLTVParser:
         return result
 
 
-# Usage example and utility functions
 def parse_xmltv_file(file_path: str) -> List[Channel]:
     """Parse XMLTV file and return channels with programmes."""
     parser = XMLTVParser()
@@ -431,12 +434,3 @@ def parse_xmltv_string(xml_content: str) -> List[Channel]:
     """Parse XMLTV from string content."""
     parser = XMLTVParser()
     return parser.parse_string(xml_content)
-
-
-if __name__ == "__main__":
-    # Example usage
-    xmltv_file = "/srv/dev/xtreamium/xtreamium-backend/.working/epg.xml"
-    channels = parse_xmltv_file(xmltv_file)
-    for channel in channels:
-        print(
-            f"Channel ID: {channel.id}, Number of Programmes: {len(channel.programmes)}")

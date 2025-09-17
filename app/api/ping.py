@@ -5,4 +5,4 @@ router = APIRouter()
 
 @router.get("")
 def ping():
-  return {"ping": "pong"}
+    return {"ping": "pong"}
