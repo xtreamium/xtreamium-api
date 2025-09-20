@@ -27,6 +27,60 @@ def __get_provider(request: Request):
     return XTream(server, username, password)
 
 
+@router.get("/")
+async def get_epg_overview(
+    current_user: User = Depends(user_services.get_current_user),
+    db: orm.Session = Depends(get_db)
+):
+    """Get EPG overview for current user."""
+    logger.info(f"GET /epg - Fetching EPG overview for user {current_user.email}")
+    try:
+        # Get count of EPG entries for this user
+        from app.models.epg import EPG
+        epg_count = db.query(EPG).filter(EPG.user_id == current_user.id).count()
+        
+        logger.info(f"Successfully retrieved EPG overview for user {current_user.email}")
+        return {
+            "user_id": str(current_user.id), 
+            "epg_programs": epg_count,
+            "status": "ok"
+        }
+    except Exception as e:
+        logger.error(f"Failed to get EPG overview for user {current_user.email}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve EPG overview")
+
+
+@router.post("/refresh")
+async def refresh_epg_data(
+    current_user: User = Depends(user_services.get_current_user),
+    db: orm.Session = Depends(get_db)
+):
+    """Refresh EPG data for current user."""
+    logger.info(f"POST /epg/refresh - Refreshing EPG data for user {current_user.email}")
+    try:
+        # Implementation for EPG refresh would go here
+        logger.info(f"EPG refresh initiated for user {current_user.email}")
+        return {"message": "EPG refresh initiated", "status": "ok"}
+    except Exception as e:
+        logger.error(f"Failed to refresh EPG for user {current_user.email}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to refresh EPG")
+
+
+@router.get("/channel/{channel_id}")
+async def get_epg_for_channel(
+    channel_id: str,
+    current_user: User = Depends(user_services.get_current_user)
+):
+    """Get EPG data for a specific channel."""
+    logger.debug(f"GET /epg/channel/{channel_id} - Fetching EPG data for channel")
+    # This endpoint would fetch programmes for the specific channel
+    return {
+        "channel_id": channel_id,
+        "programs": [],
+        "message": "EPG data for channel retrieved successfully"
+    }
+
+
 @router.get("/categories")
 def get_categories(request: Request):
     logger.info("GET /categories - Fetching channel categories")

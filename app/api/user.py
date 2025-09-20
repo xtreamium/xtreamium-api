@@ -13,6 +13,32 @@ logger = get_logger(__name__)
 router = APIRouter()
 
 
+@router.get("/")
+async def get_current_user_info(
+    current_user: schema.User = fastapi.Depends(services.get_current_user)
+):
+    """Get current authenticated user information."""
+    logger.debug(f"GET /user - Fetching current user info for: {current_user.email}")
+    return {
+        "id": str(current_user.id),
+        "email": current_user.email,
+        "status": "ok"
+    }
+
+
+@router.get("/me")
+async def get_user_profile(
+    current_user: schema.User = fastapi.Depends(services.get_current_user)
+):
+    """Get user profile information."""
+    logger.debug(f"GET /user/me - Fetching user profile for: {current_user.email}")
+    return {
+        "id": str(current_user.id),
+        "email": current_user.email,
+        "servers": current_user.servers if hasattr(current_user, 'servers') else []
+    }
+
+
 @router.post("/")
 async def create_user(
     user: schema.UserCreate, db: orm.Session = fastapi.Depends(get_db)
@@ -32,6 +58,29 @@ async def create_user(
         return token
     except Exception as e:
         logger.error(f"Failed to create user {user.email}: {e}")
+        raise
+
+
+@router.post("/register")
+async def register_user(
+    user: schema.UserCreate, db: orm.Session = fastapi.Depends(get_db)
+):
+    """Register a new user account."""
+    logger.info(f"POST /user/register - Registering new user with email: {user.email}")
+    try:
+        db_user = await services.get_user_by_email(user.email, db)
+        if db_user:
+            logger.warning(f"User registration failed - email already in use: {user.email}")
+            raise fastapi.HTTPException(status_code=400, detail="Email already in use")
+
+        created_user = await services.create_user(user, db)
+        logger.info(f"User registered successfully: {created_user.email}")
+
+        token = await services.create_token(created_user)
+        logger.debug(f"Token generated for new registered user: {created_user.email}")
+        return {"access_token": token["access_token"], "token_type": "bearer"}
+    except Exception as e:
+        logger.error(f"Failed to register user {user.email}: {e}")
         raise
 
 
@@ -55,12 +104,6 @@ async def generate_token(
     except Exception as e:
         logger.error(f"Token generation failed for user {form_data.username}: {e}")
         raise
-
-
-@router.get("/me", response_model=schema.User)
-async def get_user(user: schema.User = fastapi.Depends(services.get_current_user)):
-    logger.debug(f"GET /user/me - Fetching user profile for: {user.email}")
-    return user
 
 
 @router.get("/servers", response_model=list[server_schema.Server])

@@ -30,3 +30,30 @@ dependencies = [
   "uvicorn~=0.29.0",
   "xdg-base-dirs>=6.0.2",
 ]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=7.4.0",
+  "pytest-asyncio>=0.21.0",
+  "pytest-cov>=4.1.0",
+  "httpx>=0.24.0",
+  "factory-boy>=3.3.0",
+  "faker>=19.0.0",
+]
+
+dev = [
+  "pytest>=7.4.0",
+  "pytest-asyncio>=0.21.0",
+  "pytest-cov>=4.1.0",
+  "httpx>=0.24.0",
+  "factory-boy>=3.3.0",
+  "faker>=19.0.0",
+  "black>=23.0.0",
+  "flake8>=6.0.0",
+  "mypy>=1.5.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest-asyncio>=1.2.0",
+]

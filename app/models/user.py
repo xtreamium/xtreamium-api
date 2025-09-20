@@ -19,6 +19,7 @@ class User(database.Base):
     hashed_password = sa.Column(sa.String)
 
     servers = orm.relationship("Server", back_populates="owner")
+    channels = orm.relationship("Channel", back_populates="user")
 
     date_created = sa.Column(sa.DateTime, default=dt.datetime.now(dt.timezone.utc))
     date_last_updated = sa.Column(sa.DateTime, default=dt.datetime.now(dt.timezone.utc))

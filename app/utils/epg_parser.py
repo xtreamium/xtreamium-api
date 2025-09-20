@@ -47,8 +47,6 @@ class EPGParser:
 
         logger.debug("Parsing EPG")
         try:
-            # self._programs = xmltv.read_programmes(open(self._cache_file, 'r'))
-
             logger.debug(f"Parsing EPG from {self._cache_file}")
             channels = parse_xmltv_file(self._cache_file)
 
