@@ -18,6 +18,4 @@ class User(_UserBase):
 
 
 class UserCreate(_UserBase):
-    hashed_password: str
-
     password: str

@@ -21,6 +21,7 @@ class Server(database.Base):
     epg_url = sa.Column(sa.String, index=True)
 
     owner = orm.relationship("User", back_populates="servers")
+    channels = orm.relationship("Channel", back_populates="server")
 
     date_created = sa.Column(sa.DateTime, default=dt.datetime.now(dt.timezone.utc))
     date_last_updated = sa.Column(sa.DateTime, default=dt.datetime.now(dt.timezone.utc))
