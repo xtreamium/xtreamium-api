@@ -315,12 +315,26 @@ if [ "$USE_GH" = true ]; then
     # Generate release notes (basic changelog)
     RELEASE_NOTES="## What's Changed
 
-Release v$NEW_VERSION
+Release v$NEW_VERSION"
+
+    # Try to generate changelog from previous version
+    if git rev-parse "v$CURRENT_VERSION" >/dev/null 2>&1; then
+        # Previous version tag exists
+        CHANGELOG=$(git log v$CURRENT_VERSION..HEAD --pretty=format:'- %s (%h)' --no-merges 2>/dev/null || echo "- Initial release")
+        RELEASE_NOTES="$RELEASE_NOTES
 
 ### Changes since v$CURRENT_VERSION:
-$(git log v$CURRENT_VERSION..HEAD --pretty=format:'- %s (%h)' --no-merges)
+$CHANGELOG
 
 **Full Changelog**: https://github.com/xtreamium/xtreamium-backend/compare/v$CURRENT_VERSION...v$NEW_VERSION"
+    else
+        # No previous version tag, get recent commits
+        RECENT_COMMITS=$(git log --oneline -10 --pretty=format:'- %s (%h)' 2>/dev/null || echo "- Initial release")
+        RELEASE_NOTES="$RELEASE_NOTES
+
+### Recent Changes:
+$RECENT_COMMITS"
+    fi
 
     if gh release create "v$NEW_VERSION" \
         --title "Release v$NEW_VERSION" \
