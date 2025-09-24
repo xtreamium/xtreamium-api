@@ -21,14 +21,11 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy dependency files
-COPY pyproject.toml uv.lock ./
-
-# Install dependencies
-RUN uv sync --frozen --no-cache --no-dev
-
-# Copy application code
+# Copy all files first (more reliable for uv)
 COPY . .
+
+# Install dependencies and project
+RUN uv sync --frozen --no-dev
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash --uid 1000 app \
