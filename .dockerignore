@@ -30,6 +30,11 @@ ENV/
 env.bak/
 venv.bak/
 
+# UV specific
+.uv_cache/
+.uv
+uv.lock.bak
+
 # IDEs
 .vscode/
 .idea/
@@ -69,6 +74,9 @@ docker-compose*
 # Scripts (unless needed for container)
 scripts/
 
+# GitHub Actions
+.github/
+
 # SSL certificates (should be mounted as volumes)
 *.pem
 *.crt
@@ -86,3 +94,11 @@ logs/
 # Temporary files
 tmp/
 temp/
+
+# Migration files (may contain sensitive data in development)
+migrations/versions/
+
+# Keep only the base migration structure
+!migrations/env.py
+!migrations/script.py.mako
+!migrations/README
