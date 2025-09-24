@@ -35,12 +35,12 @@ BUMP_TYPE="patch"
 
 print_status "Working directory: $(pwd)"
 
-# Cleanup function to restore package.json if script exits unexpectedly
+# Cleanup function to restore pyproject.toml if script exits unexpectedly
 cleanup() {
-    if [ -f "~package.json" ]; then
-        print_warning "Script interrupted. Restoring original package.json..."
-        mv ~package.json package.json
-        print_success "Original package.json restored"
+    if [ -f "~pyproject.toml" ]; then
+        print_warning "Script interrupted. Restoring original pyproject.toml..."
+        mv ~pyproject.toml pyproject.toml
+        print_success "Original pyproject.toml restored"
     fi
 }
 
@@ -69,7 +69,7 @@ show_help() {
     cat << EOF
 Usage: $(basename "$0") [OPTIONS]
 
-Create a new release by incrementing the version in package.json and publishing to GitHub.
+Create a new release by incrementing the version in pyproject.toml and publishing to GitHub.
 
 OPTIONS:
     -h, --help      Show this help message and exit
@@ -86,17 +86,17 @@ EXAMPLES:
 DESCRIPTION:
     This script will:
     1. Check for uncommitted changes (must be clean)
-    2. Read current version from package.json
+    2. Read current version from pyproject.toml
     3. Increment the specified version component
-    4. Update package.json with new version
-    5. Build the project to verify it works
+    4. Update pyproject.toml with new version
+    5. Run tests to verify the project works
     6. Commit the version change to git
     7. Create and push a git tag
     8. Create a GitHub release (if gh CLI is available)
 
 REQUIREMENTS:
     - Git repository with remote configured
-    - Node.js (for reading/updating package.json)
+    - Python 3.12+ (for reading/updating pyproject.toml)
     - Clean working directory (no uncommitted changes)
     - GitHub CLI (gh) for automatic release creation (optional)
 
@@ -109,24 +109,24 @@ while [[ $# -gt 0 ]]; do
         -h|--help)
             show_help
             exit 0
-        ;;
+            ;;
         -M|--major)
             BUMP_TYPE="major"
             shift
-        ;;
+            ;;
         -m|--minor)
             BUMP_TYPE="minor"
             shift
-        ;;
+            ;;
         -p|--patch)
             BUMP_TYPE="patch"
             shift
-        ;;
+            ;;
         *)
             print_error "Unknown option: $1"
             echo "Use --help for usage information."
             exit 1
-        ;;
+            ;;
     esac
 done
 
@@ -146,9 +146,9 @@ if ! git diff-index --quiet HEAD --; then
     exit 1
 fi
 
-# Check if package.json exists
-if [ ! -f "package.json" ]; then
-    print_error "package.json not found in current directory"
+# Check if pyproject.toml exists
+if [ ! -f "pyproject.toml" ]; then
+    print_error "pyproject.toml not found in current directory"
     exit 1
 fi
 
@@ -160,8 +160,32 @@ else
     USE_GH=true
 fi
 
-# Get current version from package.json
-CURRENT_VERSION=$(node -p "require('./package.json').version")
+# Get current version from pyproject.toml
+CURRENT_VERSION=$(python3 -c "
+try:
+    import tomllib
+    with open('pyproject.toml', 'rb') as f:
+        data = tomllib.load(f)
+except ImportError:
+    # Fallback for Python < 3.11
+    try:
+        import tomli
+        with open('pyproject.toml', 'rb') as f:
+            data = tomli.load(f)
+    except ImportError:
+        # Final fallback using regex
+        import re
+        with open('pyproject.toml', 'r') as f:
+            content = f.read()
+        match = re.search(r'version = \"([^\"]+)\"', content)
+        if match:
+            print(match.group(1))
+            exit()
+        else:
+            print('ERROR: Could not parse version from pyproject.toml')
+            exit(1)
+print(data['project']['version'])
+")
 print_status "Current version: $CURRENT_VERSION"
 print_status "Bump type: $BUMP_TYPE"
 
@@ -207,57 +231,70 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-# Update package.json version
-print_status "Updating package.json version to $NEW_VERSION"
+# Update pyproject.toml version
+print_status "Updating pyproject.toml version to $NEW_VERSION"
 
-# Create a backup of the original package.json
-cp package.json ~package.json
+# Create a backup of the original pyproject.toml
+cp pyproject.toml ~pyproject.toml
 
-if command -v node &> /dev/null; then
-    node -e "
-        const fs = require('fs');
-        const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-        pkg.version = '$NEW_VERSION';
-        fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-    "
-else
-    # Fallback using sed (less reliable but works without Node.js)
-    sed -i.bak "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.json
-    rm package.json.bak
+# Update version in pyproject.toml using Python
+python3 -c "
+import re
+
+# Read the file
+with open('pyproject.toml', 'r') as f:
+    content = f.read()
+
+# Replace the version line
+content = re.sub(r'version = \"[^\"]+\"', f'version = \"$NEW_VERSION\"', content)
+
+# Write back to file
+with open('pyproject.toml', 'w') as f:
+    f.write(content)
+"
+
+print_success "Updated pyproject.toml version"
+
+# Run tests to ensure everything works
+print_status "Running tests to verify the project works..."
+TEST_SUCCESS=true
+
+# Install dependencies if needed (in case this is run in a fresh environment)
+if [ ! -d ".venv" ] && [ ! -f "requirements.txt" ]; then
+    print_status "Installing project dependencies..."
+    if ! pip install -e .; then
+        print_warning "Failed to install dependencies, tests may fail"
+    fi
 fi
 
-print_success "Updated package.json version"
-
-# Build the project to ensure everything works
-print_status "Building project to verify everything works..."
-BUILD_SUCCESS=true
-
-if command -v bun &> /dev/null; then
-    if ! bun run build; then
-        BUILD_SUCCESS=false
+# Run pytest
+if command -v pytest &> /dev/null; then
+    if ! pytest --tb=short -v; then
+        TEST_SUCCESS=false
     fi
 else
-    if ! npm run build; then
-        BUILD_SUCCESS=false
+    print_warning "pytest not found, running python -m pytest instead"
+    if ! python -m pytest --tb=short -v; then
+        TEST_SUCCESS=false
     fi
 fi
 
-# Check if build failed and restore backup if needed
-if [ "$BUILD_SUCCESS" = false ]; then
-    print_error "Build failed! Restoring original package.json..."
-    mv ~package.json package.json
-    print_error "Package.json has been restored to original state"
-    print_error "Please fix the build issues before creating a release"
+# Check if tests failed and restore backup if needed
+if [ "$TEST_SUCCESS" = false ]; then
+    print_error "Tests failed! Restoring original pyproject.toml..."
+    mv ~pyproject.toml pyproject.toml
+    print_error "pyproject.toml has been restored to original state"
+    print_error "Please fix the test failures before creating a release"
     exit 1
 fi
 
-# Remove backup since build succeeded
-rm ~package.json
-print_success "Build completed successfully"
+# Remove backup since tests succeeded
+rm ~pyproject.toml
+print_success "Tests completed successfully"
 
 # Commit the version change
 print_status "Committing version change"
-git add package.json
+git add pyproject.toml
 git commit -m "chore: bump version to $NEW_VERSION"
 
 # Create git tag
@@ -274,7 +311,7 @@ print_success "Git tag v$NEW_VERSION created and pushed"
 # Create GitHub release
 if [ "$USE_GH" = true ]; then
     print_status "Creating GitHub release"
-
+    
     # Generate release notes (basic changelog)
     RELEASE_NOTES="## What's Changed
 
@@ -283,21 +320,21 @@ Release v$NEW_VERSION
 ### Changes since v$CURRENT_VERSION:
 $(git log v$CURRENT_VERSION..HEAD --pretty=format:'- %s (%h)' --no-merges)
 
-**Full Changelog**: https://github.com/xtreamium/xtreamium-web/compare/v$CURRENT_VERSION...v$NEW_VERSION"
+**Full Changelog**: https://github.com/xtreamium/xtreamium-backend/compare/v$CURRENT_VERSION...v$NEW_VERSION"
 
     if gh release create "v$NEW_VERSION" \
         --title "Release v$NEW_VERSION" \
         --notes "$RELEASE_NOTES" \
         --latest; then
         print_success "GitHub release v$NEW_VERSION created successfully"
-        print_status "Release URL: https://github.com/xtreamium/xtreamium-web/releases/tag/v$NEW_VERSION"
+        print_status "Release URL: https://github.com/xtreamium/xtreamium-backend/releases/tag/v$NEW_VERSION"
     else
         print_error "Failed to create GitHub release. You can create it manually at:"
-        print_error "https://github.com/xtreamium/xtreamium-web/releases/new?tag=v$NEW_VERSION"
+        print_error "https://github.com/xtreamium/xtreamium-backend/releases/new?tag=v$NEW_VERSION"
     fi
 else
     print_warning "GitHub CLI not available. Please create the release manually at:"
-    print_warning "https://github.com/xtreamium/xtreamium-web/releases/new?tag=v$NEW_VERSION"
+    print_warning "https://github.com/xtreamium/xtreamium-backend/releases/new?tag=v$NEW_VERSION"
 fi
 
 # Clear the trap since we completed successfully
@@ -305,7 +342,7 @@ trap - EXIT
 
 print_success "Release process completed!"
 print_status "Version $NEW_VERSION has been:"
-print_status "  ✓ Updated in package.json"
+print_status "  ✓ Updated in pyproject.toml"
 print_status "  ✓ Committed to git"
 print_status "  ✓ Tagged as v$NEW_VERSION"
 print_status "  ✓ Pushed to remote repository"
