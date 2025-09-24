@@ -1636,6 +1636,7 @@ test = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "factory-boy" },
     { name = "pytest-asyncio" },
 ]
 
@@ -1685,4 +1686,7 @@ requires-dist = [
 provides-extras = ["test", "dev"]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pytest-asyncio", specifier = ">=1.2.0" }]
+dev = [
+    { name = "factory-boy", specifier = ">=3.3.3" },
+    { name = "pytest-asyncio", specifier = ">=1.2.0" },
+]

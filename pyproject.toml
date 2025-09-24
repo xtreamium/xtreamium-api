@@ -55,5 +55,6 @@ dev = [
 
 [dependency-groups]
 dev = [
+    "factory-boy>=3.3.3",
     "pytest-asyncio>=1.2.0",
 ]
