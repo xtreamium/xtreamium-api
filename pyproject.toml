@@ -1,5 +1,5 @@
 [project]
-name = "xtreamium-backend"
+name = "xtreamium-api"
 version = "0.3.0"
 description = "Add your description here"
 requires-python = ">=3.12"

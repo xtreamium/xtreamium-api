@@ -38,7 +38,7 @@ A FastAPI-based backend application for managing Xtream Codes IPTV services with
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd xtreamium-backend
+   cd xtreamium-api
    ```
 
 2. **Set up virtual environment** (if not using UV)
@@ -149,7 +149,7 @@ See [docs/MIGRATIONS.md](docs/MIGRATIONS.md) for detailed migration documentatio
 ## Project Structure
 
 ```
-xtreamium-backend/
+xtreamium-api/
 ├── app/
 │   ├── api/              # API route handlers
 │   ├── models/           # SQLAlchemy database models
@@ -186,10 +186,10 @@ mypy .
 ### Docker Development
 ```bash
 # Build image
-docker build -t xtreamium-backend .
+docker build -t xtreamium-api .
 
 # Run container
-docker run -p 8000:8000 xtreamium-backend
+docker run -p 8000:8000 xtreamium-api
 ```
 
 ## Background Tasks
