@@ -1,5 +1,6 @@
 import pytest
 from datetime import datetime, timezone
+from argon2 import PasswordHasher
 
 from app.models.user import User
 from tests.factories import create_test_user
@@ -21,23 +22,34 @@ class TestUserModel:
 
     @pytest.mark.unit
     def test_user_password_verification(self, test_session):
-        """Test password verification functionality."""
-        # Create user with a known hashed password
-        import passlib.hash as passlib_hash
+        """Test password verification functionality through argon2."""
+        from app.services.data.user_data_services import ph
 
         test_password = "secret123"
-        hashed_password = passlib_hash.bcrypt.hash(test_password)
+        hashed_password = ph.hash(test_password)
 
         user = create_test_user(
             test_session,
             hashed_password=hashed_password,
         )
 
-        # Should verify correct password
-        assert user.verify_password(test_password) is True
+        # Should verify correct password using argon2
+        try:
+            ph.verify(user.hashed_password, test_password)
+            password_valid = True
+        except Exception:
+            password_valid = False
+
+        assert password_valid is True
 
         # Should reject incorrect password
-        assert user.verify_password("wrong_password") is False
+        try:
+            ph.verify(user.hashed_password, "wrong_password")
+            wrong_password_valid = True
+        except Exception:
+            wrong_password_valid = False
+
+        assert wrong_password_valid is False
 
     @pytest.mark.unit
     def test_user_email_uniqueness(self, test_session):

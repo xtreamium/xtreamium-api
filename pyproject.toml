@@ -5,6 +5,7 @@ description = "Add your description here"
 requires-python = ">=3.12"
 dependencies = [
   "alembic>=1.13.0",
+  "argon2-cffi>=23.0.0",
   "citelementtree~=1.2.7",
   "fastapi~=0.111.0",
   "fastapi-cache2>=0.2.2",
@@ -13,7 +14,6 @@ dependencies = [
   "httpx>=0.28.1",
   "lxml>=6.0.1",
   "myapplication>=0.1.0",
-  "passlib>=1.7.4",
   "pbr>=7.0.1",
   "pydantic~=2.7.1",
   "pyjwt>=2.10.1",

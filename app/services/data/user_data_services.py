@@ -1,7 +1,8 @@
 import fastapi
 import fastapi.security as security
 import jwt
-import passlib.hash as passlib_hash
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError, HashingError
 import sqlalchemy.orm as orm
 
 from app.models.server import Server
@@ -15,6 +16,9 @@ from app.services.logger import get_logger
 
 logger = get_logger(__name__)
 oauth2schema = security.OAuth2PasswordBearer(tokenUrl="/api/v2/user/token")
+
+# Initialize Argon2 password hasher with secure defaults
+ph = PasswordHasher()
 
 
 async def get_user_by_email(email: str, db: orm.Session):
@@ -60,13 +64,17 @@ async def get_current_user(
 async def create_user(user: UserCreate, db: orm.Session):
     logger.info(f"Creating new user in database: {user.email}")
     try:
-        hashed_password = passlib_hash.bcrypt.hash(user.password)
+        hashed_password = ph.hash(user.password)
         db_user = User(email=user.email, hashed_password=hashed_password)
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
         logger.info(f"User created successfully in database: {user.email}")
         return db_user
+    except HashingError as e:
+        logger.error(f"Failed to hash password for user {user.email}: {e}")
+        db.rollback()
+        raise fastapi.HTTPException(status_code=500, detail="Password hashing failed")
     except Exception as e:
         logger.error(f"Failed to create user in database {user.email}: {e}")
         db.rollback()
@@ -81,13 +89,14 @@ async def authenticate_user(email: str, password: str, db: orm.Session):
             logger.warning(f"Authentication failed - user not found: {email}")
             return False
 
-        if not passlib_hash.bcrypt.verify(password, user.hashed_password):
-            logger.warning(
-                f"Authentication failed - invalid password: {email}")
+        try:
+            ph.verify(user.hashed_password, password)
+            logger.info(f"User authenticated successfully: {email}")
+            return user
+        except VerifyMismatchError:
+            logger.warning(f"Authentication failed - invalid password: {email}")
             return False
 
-        logger.info(f"User authenticated successfully: {email}")
-        return user
     except Exception as e:
         logger.error(f"Error during authentication for {email}: {e}")
         return False
@@ -119,7 +128,7 @@ async def get_user_servers(user_id: str, db: orm.Session):
 async def create_server(server: ServerCreate, user_id: str, db: orm.Session):
     logger.info(f"Creating server '{server.name}' for user ID: {user_id}")
     try:
-        db_server = Server(**server.dict(), owner_id=user_id)
+        db_server = Server(**server.model_dump(), owner_id=user_id)
         db.add(db_server)
         db.commit()
         db.refresh(db_server)
@@ -156,4 +165,22 @@ async def get_all_users(db: orm.Session):
         return users
     except Exception as e:
         logger.error(f"Failed to fetch all users: {e}")
+        raise
+
+
+async def get_user_server_by_id(user_id: str, server_id: str, db: orm.Session):
+    """Get a specific server by ID for a user"""
+    logger.debug(f"Fetching server {server_id} for user ID: {user_id}")
+    try:
+        server = db.query(Server).filter(
+            Server.id == server_id,
+            Server.owner_id == user_id
+        ).first()
+        if server:
+            logger.debug(f"Found server {server.name} for user ID: {user_id}")
+        else:
+            logger.debug(f"Server {server_id} not found for user ID: {user_id}")
+        return server
+    except Exception as e:
+        logger.error(f"Failed to fetch server {server_id} for user ID {user_id}: {e}")
         raise

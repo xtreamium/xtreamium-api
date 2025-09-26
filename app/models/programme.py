@@ -1,6 +1,6 @@
 import datetime as dt
 import json
-
+import uuid
 import sqlalchemy as sa
 from sqlalchemy import orm as orm
 
@@ -14,10 +14,10 @@ class Programme(database.Base):
     __tablename__ = "programmes"
 
     id = sa.Column(sa.Integer, primary_key=True, index=True)
-
+    id = sa.Column(sa.String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
     channel_id = sa.Column(sa.Integer, sa.ForeignKey(
-        "channels.id"), nullable=False)
-
+    channel_id = sa.Column(sa.String(36), sa.ForeignKey(
+    channel_id = sa.Column(sa.Integer, sa.ForeignKey(
     start_time = sa.Column(sa.String, nullable=False, index=True)
     stop_time = sa.Column(sa.String, nullable=True, index=True)
 

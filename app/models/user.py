@@ -1,7 +1,6 @@
 import datetime as dt
 import uuid
 
-import passlib.hash as passlib_hash
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
 
@@ -23,6 +22,3 @@ class User(database.Base):
 
     date_created = sa.Column(sa.DateTime, default=dt.datetime.now(dt.timezone.utc))
     date_last_updated = sa.Column(sa.DateTime, default=dt.datetime.now(dt.timezone.utc))
-
-    def verify_password(self, password: str):
-        return passlib_hash.bcrypt.verify(password, self.hashed_password)

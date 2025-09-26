@@ -15,7 +15,7 @@ class EPG(database.Base):
 
     # Composite primary key
     user_id = sa.Column(sa.String(36), sa.ForeignKey("users.id"), primary_key=True)
-    server_id = sa.Column(sa.Integer, sa.ForeignKey("servers.id"), primary_key=True)
+    server_id = sa.Column(sa.String(36), sa.ForeignKey("servers.id"), primary_key=True)
 
     # Store the parsed programs as JSON
     programs_data = sa.Column(sa.Text, nullable=False)

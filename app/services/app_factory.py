@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
-from fastapi_users import fastapi_users, FastAPIUsers
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api import api_router
@@ -16,13 +15,13 @@ def create_app():
         description=description,
         redoc_url=None,
     )
-    setup_routers(app, fastapi_users)
+    setup_routers(app)
     setup_cors_middleware(app)
     # serve_static_app(app)
     return app
 
 
-def setup_routers(app: FastAPI, fastapi_users: FastAPIUsers) -> None:
+def setup_routers(app: FastAPI) -> None:
     app.include_router(api_router, prefix=settings.API_PATH)
     use_route_names_as_operation_ids(app)
 

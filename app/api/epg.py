@@ -8,6 +8,7 @@ from app.services.data.epg_data_services import get_programmes_for_channel
 from app.services.db_factory import get_db
 from app.services.logger import get_logger
 from app.utils.XTream import XTream
+from app.utils.epg_parser import EPGParser
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -38,10 +39,10 @@ async def get_epg_overview(
         # Get count of EPG entries for this user
         from app.models.epg import EPG
         epg_count = db.query(EPG).filter(EPG.user_id == current_user.id).count()
-        
+
         logger.info(f"Successfully retrieved EPG overview for user {current_user.email}")
         return {
-            "user_id": str(current_user.id), 
+            "user_id": str(current_user.id),
             "epg_programs": epg_count,
             "status": "ok"
         }
@@ -52,17 +53,43 @@ async def get_epg_overview(
 
 @router.post("/refresh")
 async def refresh_epg_data(
+    server_id: str,
     current_user: User = Depends(user_services.get_current_user),
     db: orm.Session = Depends(get_db)
 ):
-    """Refresh EPG data for current user."""
-    logger.info(f"POST /epg/refresh - Refreshing EPG data for user {current_user.email}")
+    """Refresh EPG data for current user and specific server."""
+    logger.info(f"POST /epg/refresh - Refreshing EPG data for user {current_user.email}, server {server_id}")
     try:
-        # Implementation for EPG refresh would go here
-        logger.info(f"EPG refresh initiated for user {current_user.email}")
-        return {"message": "EPG refresh initiated", "status": "ok"}
+        # Get the server and verify it belongs to the current user
+        server = await user_services.get_user_server_by_id(current_user.id, server_id, db)
+
+        if not server:
+            logger.warning(f"Server {server_id} not found for user {current_user.email}")
+            raise HTTPException(status_code=404, detail="Server not found")
+
+        if not server.epg_url:
+            logger.warning(f"Server {server.name} has no EPG URL configured")
+            raise HTTPException(status_code=400, detail="Server has no EPG URL configured")
+
+        logger.info(
+            f"Initiating EPG refresh for server '{server.name}' (ID: {server_id}) for user {current_user.email}")
+
+        # Create EPG parser and refresh the data
+        epg_parser = EPGParser(server.epg_url, server.id, current_user.id)
+        await epg_parser.cache_epg(db, force=True)
+
+        logger.info(f"EPG refresh completed successfully for server '{server.name}' for user {current_user.email}")
+        return {
+            "message": f"EPG refresh completed for server '{server.name}'",
+            "server_id": server_id,
+            "server_name": server.name,
+            "status": "ok"
+        }
+    except HTTPException:
+        # Re-raise HTTPExceptions as-is
+        raise
     except Exception as e:
-        logger.error(f"Failed to refresh EPG for user {current_user.email}: {e}")
+        logger.error(f"Failed to refresh EPG for user {current_user.email}, server {server_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to refresh EPG")
 
 
