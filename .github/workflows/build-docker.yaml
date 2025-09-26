@@ -2,7 +2,7 @@ name: Build and Publish Docker Image
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 env:
   REGISTRY: ghcr.io
@@ -27,7 +27,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_PAT }}
 
       - name: Extract metadata
         id: meta
