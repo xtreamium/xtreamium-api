@@ -20,12 +20,10 @@ class TestPingEndpoint:
     @pytest.mark.asyncio
     async def test_ping_endpoint_async(self, async_client):
         """Test ping endpoint with async client."""
-        response = await async_client.get("/api/v1/ping")
+        response = await async_client.get("/api/v1/ping", follow_redirects=True)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
         assert "status" in data
         assert "ping" in data
         assert data["ping"] == "pong"
-
-

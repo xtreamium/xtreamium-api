@@ -29,8 +29,8 @@ class EPGParser:
         if not os.path.exists(cache_file_dir):
             os.makedirs(cache_file_dir)
 
-    async def cache_epg(self, db: orm.Session):
-        if os.path.isfile(self._cache_file) and not is_file_older_cache_time(self._cache_file):
+    async def cache_epg(self, db: orm.Session, force: bool = False):
+        if os.path.isfile(self._cache_file) and not (is_file_older_cache_time(self._cache_file) or force):
             logger.debug(f"Cache file {self._cache_file} exists, and is recent.")
             return
 

@@ -31,20 +31,31 @@ class TestUserAPI:
     @pytest.mark.auth
     def test_user_login(self, client, test_session):
         """Test user login endpoint."""
-        # Create a test user
+        from app.services.data.user_data_services import ph
+
+        # Create a test user with argon2 hash
+        test_password = "secret"
+        hashed_password = ph.hash(test_password)
+
         user = create_test_user(
             test_session,
             email="testuser@example.com",
-            hashed_password="$2b$12$f0dMPd3OZeh4T0kvQGauhesXJsIITt74.C4NTxMfG9CGXhUAb006i"  # "secret"
+            hashed_password=hashed_password
         )
         test_session.commit()
 
         login_data = {
-            "username": "testuser@example.com",  # FastAPI Users typically uses 'username' field
-            "password": "secret"
+            "username": "testuser@example.com",
+            "password": "secret",
+            "grant_type": "password"
         }
 
-        response = client.post("/api/v1/auth/login", data=login_data)
+        # Use proper OAuth2 form encoding
+        response = client.post(
+            "/api/v1/user/token",
+            data=login_data,
+            headers={"Content-Type": "application/x-www-form-urlencoded"}
+        )
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()

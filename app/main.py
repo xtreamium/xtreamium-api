@@ -8,7 +8,7 @@ from app.services.tasks.register_tasks import register_tasks
 
 logger = get_logger(__name__)
 
-logger.info("Starting Xtreamium backend application")
+logger.info("Starting Xtreamium API")
 
 try:
     logger.info("Creating database...")
