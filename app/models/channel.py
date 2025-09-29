@@ -13,14 +13,12 @@ class Channel(database.Base):
 
     __tablename__ = "channels"
 
-    # Primary key
-    # Primary key - changed to GUID
+    # Primary key - GUID as specified in instructions
     id = sa.Column(sa.String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+
     # Foreign keys
     user_id = sa.Column(sa.String(36), sa.ForeignKey("users.id"), nullable=False)
-    server_id = sa.Column(sa.Integer, sa.ForeignKey("servers.id"), nullable=False)
     server_id = sa.Column(sa.String(36), sa.ForeignKey("servers.id"), nullable=False)
-    server_id = sa.Column(sa.Integer, sa.ForeignKey("servers.id"), nullable=False)
     xmltv_id = sa.Column(sa.String, nullable=False, index=True)  # The original channel ID from XMLTV
 
     # Channel data - stored as JSON for flexibility since the structure can vary
