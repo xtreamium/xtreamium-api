@@ -96,8 +96,9 @@ DESCRIPTION:
 
 REQUIREMENTS:
     - Git repository with remote configured
+    - uv package manager (https://docs.astral.sh/uv/getting-started/installation/)
     - Python 3.12+ (for reading/updating pyproject.toml)
-    - Clean working directory (no uncommitted changes)
+    - Clean working directory (no uncommitted changes)  
     - GitHub CLI (gh) for automatic release creation (optional)
 
 EOF
@@ -133,6 +134,13 @@ done
 # Check if we're in a git repository
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
     print_error "Not in a git repository"
+    exit 1
+fi
+
+# Check if uv is available (required for this project)
+if ! command -v uv &> /dev/null; then
+    print_error "uv not found. This project uses uv for package management."
+    print_error "Please install uv: https://docs.astral.sh/uv/getting-started/installation/"
     exit 1
 fi
 
@@ -260,23 +268,17 @@ print_status "Running tests to verify the project works..."
 TEST_SUCCESS=true
 
 # Install dependencies if needed (in case this is run in a fresh environment)
-if [ ! -d ".venv" ] && [ ! -f "requirements.txt" ]; then
-    print_status "Installing project dependencies..."
-    if ! pip install -e .; then
-        print_warning "Failed to install dependencies, tests may fail"
+if [ ! -d ".venv" ]; then
+    print_status "Installing project dependencies with uv..."
+    if ! uv sync; then
+        print_error "Failed to install dependencies with uv"
+        exit 1
     fi
 fi
 
-# Run pytest
-if command -v pytest &> /dev/null; then
-    if ! pytest --tb=short -v; then
-        TEST_SUCCESS=false
-    fi
-else
-    print_warning "pytest not found, running python -m pytest instead"
-    if ! python -m pytest --tb=short -v; then
-        TEST_SUCCESS=false
-    fi
+# Run pytest using uv
+if ! uv run pytest --tb=short -v; then
+    TEST_SUCCESS=false
 fi
 
 # Check if tests failed and restore backup if needed
