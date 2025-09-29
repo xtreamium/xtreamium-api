@@ -96,7 +96,7 @@ tmp/
 temp/
 
 # Migration files (may contain sensitive data in development)
-migrations/versions/
+#migrations/versions/
 
 # Keep only the base migration structure
 !migrations/env.py

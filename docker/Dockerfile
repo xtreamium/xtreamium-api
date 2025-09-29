@@ -39,5 +39,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/api/v1/ping || exit 1
 
-# Run migrations and start app
-CMD ["sh", "-c", "uv run alembic upgrade head && uv run python app/main.py"]
+# Run FastAPI with uvicorn (database initialization happens in app startup)
+CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
