@@ -8,21 +8,37 @@ from app.services.tasks.register_tasks import register_tasks
 
 logger = get_logger(__name__)
 
-logger.info("Starting Xtreamium API")
+# Initialize app variable
+app = None
 
-try:
-    logger.info("Creating database...")
-    create_database()
+def initialize_application():
+    """Initialize the application and database"""
+    global app
 
-    logger.info("Creating FastAPI application...")
-    app = create_app()
+    if app is not None:
+        return app
 
-    logger.info("Registering background tasks...")
-    register_tasks(app)
+    logger.info("Starting Xtreamium API")
 
-except Exception as e:
-    logger.error(f"Failed to initialize application: {e}")
-    raise
+    try:
+        logger.info("Creating database...")
+        create_database()
+
+        logger.info("Creating FastAPI application...")
+        app = create_app()
+
+        logger.info("Registering background tasks...")
+        register_tasks(app)
+
+        logger.info("Application initialization completed successfully")
+        return app
+
+    except Exception as e:
+        logger.error(f"Failed to initialize application: {e}")
+        raise
+
+# Initialize the app when module is imported (for uvicorn)
+app = initialize_application()
 
 if __name__ == '__main__':
     import uvicorn

@@ -10,7 +10,7 @@ from sqlalchemy import pool
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 # Import the database and models AFTER setting up the path
-from app.database import Base, DATABASE_URL
+from app.database import Base
 
 # Import all models to ensure they're registered with Base.metadata
 from app.models.user import User
@@ -28,7 +28,12 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Set the database URL from our app's configuration
+# Set the database URL from environment variable (same as the app uses)
+APP_DIR = os.path.dirname(os.path.dirname(__file__))
+DEFAULT_DB_PATH = os.path.join(APP_DIR, "app", "xtreamium.db")
+DATABASE_URL = os.environ.get('DATABASE_URL') or f"sqlite:///{DEFAULT_DB_PATH}"
+
+# Set the database URL for Alembic to use
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # add your model's MetaData object here
