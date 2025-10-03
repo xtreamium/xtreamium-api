@@ -21,8 +21,12 @@ def initialize_application():
     logger.info("Starting Xtreamium API")
 
     try:
-        logger.info("Creating database...")
-        create_database()
+        # Skip database initialization during testing
+        if os.getenv("TESTING", "false").lower() != "true":
+            logger.info("Creating database...")
+            create_database()
+        else:
+            logger.info("TESTING mode - skipping database initialization")
 
         logger.info("Creating FastAPI application...")
         app = create_app()
