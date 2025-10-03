@@ -1,7 +1,7 @@
 import fastapi
-import fastapi.security as security
 import sqlalchemy.orm as orm
-from fastapi import APIRouter
+from fastapi import APIRouter, Form
+from typing import Optional
 
 from app.schemas import server as server_schema
 from app.schemas import user as schema
@@ -11,6 +11,26 @@ from app.services.logger import get_logger
 
 logger = get_logger(__name__)
 router = APIRouter()
+
+
+class OAuth2PasswordRequestFormFlexible:
+    """Custom OAuth2 password form that allows empty grant_type."""
+
+    def __init__(
+        self,
+        grant_type: Optional[str] = Form(default="password"),
+        username: str = Form(),
+        password: str = Form(),
+        scope: str = Form(default=""),
+        client_id: Optional[str] = Form(default=None),
+        client_secret: Optional[str] = Form(default=None),
+    ):
+        self.grant_type = grant_type or "password"
+        self.username = username
+        self.password = password
+        self.scopes = scope.split() if scope else []
+        self.client_id = client_id
+        self.client_secret = client_secret
 
 
 @router.get("/")
@@ -86,7 +106,7 @@ async def register_user(
 
 @router.post("/token")
 async def generate_token(
-    form_data: security.OAuth2PasswordRequestForm = fastapi.Depends(),
+    form_data: OAuth2PasswordRequestFormFlexible = fastapi.Depends(),
     db: orm.Session = fastapi.Depends(get_db),
 ):
     logger.info(f"POST /token - Authentication attempt for user: {form_data.username}")
