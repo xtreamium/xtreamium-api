@@ -10,6 +10,9 @@ from httpx import AsyncClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+# Set TESTING environment variable BEFORE importing app.main
+os.environ["TESTING"] = "true"
+
 from app.database import Base
 from app.main import app
 from app.services.db_factory import get_db
