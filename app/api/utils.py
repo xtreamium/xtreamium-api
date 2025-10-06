@@ -2,6 +2,7 @@ import logging
 
 import httpx
 from fastapi import APIRouter
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, HttpUrl
 
 router = APIRouter()
@@ -37,3 +38,23 @@ async def check_url(request: URLCheckRequest) -> URLCheckResponse:
     except Exception as e:
         logger.error(f"Unexpected error checking URL {request.url}: {e}")
         return URLCheckResponse(accessible=False, error="Unknown error")
+
+
+@router.get("/proxy-version", response_class=PlainTextResponse)
+async def get_proxy_version() -> str:
+    """Fetch the latest version of the proxy from GitHub releases"""
+    try:
+        timeout = httpx.Timeout(10.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.get(
+                "https://api.github.com/repos/xtreamium/xtreamium-proxy/releases/latest"
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data.get("tag_name", "unknown")
+    except httpx.RequestError as e:
+        logger.error(f"Error fetching proxy version: {e}")
+        return "unknown"
+    except Exception as e:
+        logger.error(f"Unexpected error fetching proxy version: {e}")
+        return "unknown"

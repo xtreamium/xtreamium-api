@@ -37,8 +37,9 @@ def run_migrations():
         logger.info("Executing Alembic upgrade to head...")
         command.upgrade(alembic_cfg, "head")
 
-        # Verify tables were created
-        updated_tables = inspector.get_table_names()
+        # Verify tables were created - create a fresh inspector to see the changes
+        fresh_inspector = inspect(engine)
+        updated_tables = fresh_inspector.get_table_names()
         logger.info(f"After migration: {len(updated_tables)} tables in database")
 
         if not updated_tables:
