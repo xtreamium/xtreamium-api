@@ -11,6 +11,7 @@ logger = get_logger(__name__)
 # Initialize app variable
 app = None
 
+
 def initialize_application():
     """Initialize the application and database"""
     global app
@@ -41,6 +42,7 @@ def initialize_application():
         logger.error(f"Failed to initialize application: {e}")
         raise
 
+
 # Initialize the app when module is imported (for uvicorn)
 app = initialize_application()
 
@@ -58,17 +60,17 @@ if __name__ == '__main__':
     port = int(os.environ.get('XTREAMIUM_BACKEND_PORT', 8000))
     reload = os.environ.get('RELOAD', 'true').lower() == 'true'
     disable_ssl = os.environ.get('DISABLE_SSL', 'false').lower() == 'true'
-    
+
     logger.info(f"Starting uvicorn server on port {port}")
 
     # SSL configuration - only use if certificates exist and SSL is not disabled
     ssl_keyfile = '/etc/letsencrypt/live/dev.fergl.ie/privkey.pem'
     ssl_certfile = '/etc/letsencrypt/live/dev.fergl.ie/fullchain.pem'
-    
-    use_ssl = (not disable_ssl and 
-               os.path.exists(ssl_keyfile) and 
+
+    use_ssl = (not disable_ssl and
+               os.path.exists(ssl_keyfile) and
                os.path.exists(ssl_certfile))
-    
+
     if use_ssl:
         logger.info("SSL certificates found, starting with HTTPS")
     else:
@@ -77,7 +79,7 @@ if __name__ == '__main__':
         ssl_certfile = None
 
     uvicorn.run(
-        'main:app',
+        'app.main:app',
         host='0.0.0.0',
         reload=reload,
         port=port,
