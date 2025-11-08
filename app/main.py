@@ -58,7 +58,6 @@ if __name__ == '__main__':
     logging.getLogger("uvicorn.access").handlers = []
 
     port = int(os.environ.get('XTREAMIUM_BACKEND_PORT', 8000))
-    reload = os.environ.get('RELOAD', 'true').lower() == 'true'
     disable_ssl = os.environ.get('DISABLE_SSL', 'false').lower() == 'true'
 
     logger.info(f"Starting uvicorn server on port {port}")
@@ -81,7 +80,7 @@ if __name__ == '__main__':
     uvicorn.run(
         'app.main:app',
         host='0.0.0.0',
-        reload=reload,
+        reload=False,
         port=port,
         ssl_keyfile=ssl_keyfile,
         ssl_certfile=ssl_certfile,
