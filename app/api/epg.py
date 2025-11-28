@@ -1,10 +1,13 @@
 import sqlalchemy.orm as orm
+from typing import List
 from fastapi import APIRouter, Request, HTTPException, Depends
+from pydantic import BaseModel
 
 from app.schemas.user import User
 from app.services.data import user_data_services as user_services
 from app.services.data.epg_data_services import get_channel_by_xmltv_id
 from app.services.data.epg_data_services import get_programmes_for_channel
+from app.services.data.epg_data_services import get_programmes_for_channels_batch
 from app.services.db_factory import get_db
 from app.services.logger import get_logger
 from app.utils.XTream import XTream
@@ -12,6 +15,11 @@ from app.utils.epg_parser import EPGParser
 
 logger = get_logger(__name__)
 router = APIRouter()
+
+
+class BatchEPGRequest(BaseModel):
+    """Request model for batch EPG listing requests."""
+    channel_ids: List[str]
 
 
 def __get_provider(request: Request):
@@ -170,6 +178,34 @@ async def get_channel_listing_from_epg(
     except Exception as e:
         logger.error(f"Failed to get EPG listings for channel {channel_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve EPG listings")
+
+
+@router.post("/listings/batch")
+async def get_channel_listings_batch(
+    server_id: str,
+    request_body: BatchEPGRequest,
+    request: Request,
+    current_user: User = Depends(user_services.get_current_user),
+    db: orm.Session = Depends(get_db)
+):
+    """Get EPG listings for multiple channels in a single request (batch endpoint)."""
+    channel_ids = request_body.channel_ids
+    logger.info(f"POST /listings/batch - Fetching EPG listings for {len(channel_ids)} channels for user {current_user.email}")
+
+    try:
+        # Get programmes for all channels in one database query
+        result = await get_programmes_for_channels_batch(
+            user_id=current_user.id,
+            server_id=server_id,
+            channel_ids=channel_ids,
+            db=db
+        )
+
+        logger.info(f"Successfully retrieved EPG listings for {len(result)} channels")
+        return result
+    except Exception as e:
+        logger.error(f"Failed to get batch EPG listings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve batch EPG listings")
 
 
 @router.get("/channel/url/{program_id}")

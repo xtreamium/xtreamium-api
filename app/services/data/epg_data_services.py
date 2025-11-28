@@ -319,6 +319,75 @@ async def get_programmes_for_channel(channel_id: int, db: orm.Session, start_tim
     return query.order_by(Programme.start_time).all()
 
 
+async def get_programmes_for_channels_batch(
+    user_id: str,
+    server_id: int,
+    channel_ids: List[str],
+    db: orm.Session
+) -> Dict[str, List[dict]]:
+    """
+    Get programmes for multiple channels in a single database query (batch operation)
+
+    Args:
+        user_id: User ID
+        server_id: Server ID
+        channel_ids: List of XMLTV channel IDs
+        db: Database session
+
+    Returns:
+        Dictionary mapping channel_id to list of programme dictionaries
+    """
+    if not channel_ids:
+        return {}
+
+    try:
+        # Step 1: Get all channels in one query
+        channels = db.query(Channel).filter(
+            Channel.user_id == user_id,
+            Channel.server_id == server_id,
+            Channel.xmltv_id.in_(channel_ids)
+        ).all()
+
+        if not channels:
+            logger.warning(f"No channels found for user {user_id}, server {server_id}")
+            return {}
+
+        # Create mapping of channel database ID to xmltv_id for response
+        channel_id_map = {channel.id: channel.xmltv_id for channel in channels}
+        channel_db_ids = list(channel_id_map.keys())
+
+        # Step 2: Get all programmes for these channels in one query
+        programmes = db.query(Programme).filter(
+            Programme.channel_id.in_(channel_db_ids)
+        ).order_by(Programme.start_time).all()
+
+        # Step 3: Group programmes by channel xmltv_id
+        result = {xmltv_id: [] for xmltv_id in channel_ids}
+
+        for programme in programmes:
+            xmltv_id = channel_id_map.get(programme.channel_id)
+            if xmltv_id:
+                programme_data = {
+                    "start": programme.start_time,
+                    "stop": programme.stop_time,
+                    "title": programme.get_default_title(),
+                    "description": programme.get_default_description(),
+                    "categories": programme.get_categories() or []
+                }
+                result[xmltv_id].append(programme_data)
+
+        logger.info(
+            f"Batch query retrieved programmes for {len(channels)} channels "
+            f"with {len(programmes)} total programmes"
+        )
+
+        return result
+
+    except Exception as e:
+        logger.error(f"Failed to get programmes batch for user {user_id}, server {server_id}: {e}")
+        raise
+
+
 async def get_current_and_next_programmes(channel_id: int, current_time: str, db: orm.Session) -> dict:
     """
     Get current and next programmes for a channel based on the given time
