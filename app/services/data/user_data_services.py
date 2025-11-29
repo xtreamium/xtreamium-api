@@ -31,6 +31,47 @@ async def get_user_by_email(email: str, db: orm.Session):
     return user
 
 
+async def get_or_create_oauth_user(email: str, oauth_provider: str, oauth_id: str, db: orm.Session):
+    """Get existing OAuth user or create a new one."""
+    logger.debug(f"Looking up OAuth user: {email} (provider: {oauth_provider})")
+
+    # Try to find user by OAuth provider and ID first
+    user = db.query(User).filter(
+        User.oauth_provider == oauth_provider,
+        User.oauth_id == oauth_id
+    ).first()
+
+    if user:
+        logger.debug(f"OAuth user found by provider ID: {email}")
+        return user
+
+    # Try to find by email (in case user registered with password first)
+    user = db.query(User).filter(User.email == email).first()
+
+    if user:
+        # Update existing user with OAuth info
+        logger.info(f"Linking OAuth provider {oauth_provider} to existing user: {email}")
+        user.oauth_provider = oauth_provider
+        user.oauth_id = oauth_id
+        db.commit()
+        db.refresh(user)
+        return user
+
+    # Create new OAuth user
+    logger.info(f"Creating new OAuth user: {email} (provider: {oauth_provider})")
+    new_user = User(
+        email=email,
+        oauth_provider=oauth_provider,
+        oauth_id=oauth_id,
+        hashed_password=None  # OAuth users don't have passwords
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    logger.info(f"OAuth user created successfully: {email}")
+    return new_user
+
+
 async def get_current_user(
     db: orm.Session = fastapi.Depends(get_db),
     token: str = fastapi.Depends(oauth2schema),

@@ -16,5 +16,14 @@ class Settings(BaseSettings):
         "http://localhost:35729",
     ]
 
+    # Google OAuth settings
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = ""
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
 
 settings = Settings()

@@ -15,7 +15,12 @@ class User(database.Base):
     id = sa.Column(sa.String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
 
     email = sa.Column(sa.String, unique=True, index=True)
-    hashed_password = sa.Column(sa.String)
+    hashed_password = sa.Column(sa.String, nullable=True)  # Nullable for OAuth users
+
+    # OAuth fields
+    oauth_provider = sa.Column(sa.String, nullable=True)  # 'google', 'github', etc.
+    oauth_id = sa.Column(sa.String, nullable=True)  # Provider's user ID
+    oauth_token = sa.Column(sa.String, nullable=True)  # OAuth access token (optional)
 
     servers = orm.relationship("Server", back_populates="owner")
     channels = orm.relationship("Channel", back_populates="user")
