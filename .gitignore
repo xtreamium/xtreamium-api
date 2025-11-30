@@ -159,3 +159,4 @@ xtreamium.db
 app/xtreamium.db
 
 .env
+.env.production
