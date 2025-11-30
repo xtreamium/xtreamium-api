@@ -232,9 +232,9 @@ esac
 print_status "New version will be: $NEW_VERSION ($BUMP_TYPE bump)"
 
 # Ask for confirmation
-read -p "Do you want to create release $NEW_VERSION? (y/N): " -n 1 -r
+read -p "Do you want to create release $NEW_VERSION? (Y/n): " -n 1 -r
 echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+if [[ $REPLY =~ ^[Nn]$ ]]; then
     print_warning "Release creation cancelled"
     exit 0
 fi
