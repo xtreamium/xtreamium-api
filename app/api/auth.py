@@ -9,6 +9,7 @@ from app.services.data import user_data_services as services
 from app.services.db_factory import get_db
 from app.services.logger import get_logger
 from app.services.google_oauth import google_oauth_service
+from app.services.github_oauth import github_oauth_service
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -21,6 +22,11 @@ class GoogleAuthRequest(BaseModel):
 
 class GoogleAuthCodeRequest(BaseModel):
     """Request model for Google OAuth code exchange."""
+    code: str
+
+
+class GitHubAuthCodeRequest(BaseModel):
+    """Request model for GitHub OAuth code exchange."""
     code: str
 
 
@@ -138,3 +144,45 @@ async def google_auth_code(
     except Exception as e:
         logger.error(f"Google code authentication failed: {e}")
         raise fastapi.HTTPException(status_code=401, detail="Google authentication failed")
+
+
+@router.post("/github/code")
+async def github_auth_code(
+    auth_request: GitHubAuthCodeRequest,
+    db: orm.Session = fastapi.Depends(get_db),
+):
+    """Authenticate user with GitHub authorization code."""
+    logger.info("POST /auth/github/code - GitHub authentication with authorization code")
+    try:
+        # Exchange code for access token
+        token_data = await github_oauth_service.exchange_code_for_token(auth_request.code)
+
+        # Get user info using access token
+        user_info = await github_oauth_service.get_user_info(token_data["access_token"])
+
+        email = user_info.get("email")
+        github_id = str(user_info.get("id"))
+
+        if not email:
+            logger.warning("GitHub user info missing email")
+            raise fastapi.HTTPException(
+                status_code=400,
+                detail="GitHub account must have a verified email address"
+            )
+
+        if not github_id:
+            logger.warning("GitHub user info missing user ID")
+            raise fastapi.HTTPException(status_code=400, detail="Invalid GitHub user info")
+
+        # Get or create user
+        user = await services.get_or_create_oauth_user(email, "github", github_id, db)
+
+        # Create JWT token for our application
+        token = await services.create_token(user)
+        logger.info(f"GitHub authentication successful for user: {email}")
+
+        return {"access_token": token["access_token"], "token_type": "bearer"}
+
+    except Exception as e:
+        logger.error(f"GitHub code authentication failed: {e}")
+        raise fastapi.HTTPException(status_code=401, detail="GitHub authentication failed")
