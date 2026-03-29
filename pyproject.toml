@@ -1,6 +1,6 @@
 [project]
 name = "xtreamium-api"
-version = "0.3.24"
+version = "0.3.25"
 description = "Add your description here"
 requires-python = ">=3.12"
 dependencies = [
