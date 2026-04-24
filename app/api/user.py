@@ -155,6 +155,23 @@ async def add_server(
         raise
 
 
+@router.put("/server/{server_id}", response_model=server_schema.Server)
+async def update_server(
+    server_id: str,
+    server: server_schema.ServerUpdate,
+    user: schema.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(get_db)
+):
+    logger.info(f"PUT /user/server/{server_id} - Updating server for user: {user.email}")
+    try:
+        updated = await services.update_server(server_id, user.id, server, db)
+        logger.info(f"Server {server_id} updated successfully for user: {user.email}")
+        return updated
+    except Exception as e:
+        logger.error(f"Failed to update server {server_id} for user {user.email}: {e}")
+        raise
+
+
 @router.delete("/server/{server_id}")
 async def delete_server(server_id: str,
                         db: orm.Session = fastapi.Depends(get_db)):

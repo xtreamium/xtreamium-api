@@ -29,7 +29,7 @@ def __get_provider(request: Request):
 
     logger.debug(f"Creating XTream provider for server: {server}, username: {username}")
 
-    if not all([server, username, password]):
+    if not all([server]):
         logger.warning("Missing required headers for XTream provider")
         raise HTTPException(status_code=400, detail="Missing required XTream headers")
 

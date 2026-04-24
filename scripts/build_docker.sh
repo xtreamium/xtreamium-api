@@ -40,6 +40,7 @@ docker build \
     --file "$DOCKERFILE_PATH" \
     --build-arg RUN_MODE="$RUN_MODE" \
     --tag "$TAG" \
+    --push \
     "$CONTEXT_DIR"
 
 echo ""

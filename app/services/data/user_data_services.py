@@ -7,7 +7,7 @@ import sqlalchemy.orm as orm
 
 from app.models.server import Server
 from app.models.user import User
-from app.schemas.server import ServerCreate as ServerCreate
+from app.schemas.server import ServerCreate as ServerCreate, ServerUpdate
 from app.schemas.user import User as UserSchema
 from app.schemas.user import UserCreate
 from app.services.config import settings
@@ -179,6 +179,33 @@ async def create_server(server: ServerCreate, user_id: str, db: orm.Session):
     except Exception as e:
         logger.error(
             f"Failed to create server '{server.name}' for user ID {user_id}: {e}")
+        db.rollback()
+        raise
+
+
+async def update_server(server_id: str, user_id: str, data: ServerUpdate, db: orm.Session):
+    logger.info(f"Updating server ID: {server_id} for user ID: {user_id}")
+    try:
+        server = db.query(Server).filter(
+            Server.id == server_id,
+            Server.owner_id == user_id
+        ).first()
+        if not server:
+            raise fastapi.HTTPException(status_code=404, detail="Server not found")
+
+        for field, value in data.model_dump(exclude_unset=True).items():
+            setattr(server, field, value)
+
+        import datetime as dt
+        server.date_last_updated = dt.datetime.now(dt.timezone.utc)
+        db.commit()
+        db.refresh(server)
+        logger.info(f"Server ID {server_id} updated successfully")
+        return server
+    except fastapi.HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to update server ID {server_id}: {e}")
         db.rollback()
         raise
 
