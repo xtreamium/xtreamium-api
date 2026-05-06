@@ -8,6 +8,7 @@ from app.services.data import user_data_services as user_services
 from app.services.data.epg_data_services import get_channel_by_xmltv_id
 from app.services.data.epg_data_services import get_programmes_for_channel
 from app.services.data.epg_data_services import get_programmes_for_channels_batch
+from app.services.data.epg_data_services import search_programmes
 from app.services.db_factory import get_db
 from app.services.logger import get_logger
 from app.utils.XTream import XTream
@@ -206,6 +207,35 @@ async def get_channel_listings_batch(
     except Exception as e:
         logger.error(f"Failed to get batch EPG listings: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve batch EPG listings")
+
+
+@router.get("/search")
+async def search_epg(
+    server_id: str,
+    q: str,
+    request: Request,
+    limit: int = 50,
+    current_user: User = Depends(user_services.get_current_user),
+    db: orm.Session = Depends(get_db),
+):
+    """Search EPG programmes by title for the given server, excluding past airings."""
+    if not q or len(q.strip()) < 2:
+        return []
+    try:
+        provider = None
+        try:
+            provider = __get_provider(request)
+        except HTTPException:
+            # Headers missing — fall back to unenriched results.
+            provider = None
+        return await search_programmes(
+            current_user.id, server_id, q, db, limit, provider=provider
+        )
+    except Exception as e:
+        logger.error(
+            f"EPG search failed for user {current_user.email} q='{q}' server={server_id}: {e}"
+        )
+        raise HTTPException(status_code=500, detail="EPG search failed")
 
 
 @router.get("/channel/url/{program_id}")

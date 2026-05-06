@@ -49,6 +49,9 @@ class XTream:
             self._server, self._username, self._password, 'get_live_streams', category_id)
         return url
 
+    def __get_all_live_streams_url(self):
+        return f'{self.__get_authenticate_url()}&action=get_live_streams'
+
     def get_categories(self, stream_type=StreamType.LIVE):
         url = ""
         if stream_type == StreamType.LIVE:
@@ -74,6 +77,10 @@ class XTream:
 
         r = requests.get(url)
         return r
+
+    def get_all_live_streams(self):
+        """Fetch every live stream across all categories in one call."""
+        return requests.get(self.__get_all_live_streams_url())
 
     def get_live_stream_url(self, stream_id):
         return f"{self._server}/live/{self._username}/{self._password}/{stream_id}.ts"

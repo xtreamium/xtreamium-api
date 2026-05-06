@@ -1,6 +1,8 @@
 import datetime as dt
+import re
 from typing import List, Optional, Dict
 
+import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from sqlalchemy import text
 
@@ -10,6 +12,29 @@ from app.services.logger import get_logger
 from app.utils.iptv_parser_ng import Channel as XMLTVChannel, Programme as XMLTVProgramme
 
 logger = get_logger(__name__)
+
+_XMLTV_TIME_RE = re.compile(r"^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\s*([+-]\d{4})?$")
+
+
+def xmltv_to_utc_epoch(s: Optional[str]) -> Optional[int]:
+    """Parse an XMLTV time string ("YYYYMMDDHHMMSS +ZZZZ") into a UTC epoch.
+
+    The offset suffix is honoured; a missing offset is treated as UTC.
+    Returns None on parse failure so callers can fall back safely.
+    """
+    if not s:
+        return None
+    m = _XMLTV_TIME_RE.match(s.strip())
+    if not m:
+        return None
+    y, mo, d, h, mi, se, tz = m.groups()
+    if tz:
+        sign = 1 if tz[0] == "+" else -1
+        offset_minutes = sign * (int(tz[1:3]) * 60 + int(tz[3:5]))
+    else:
+        offset_minutes = 0
+    naive = dt.datetime(int(y), int(mo), int(d), int(h), int(mi), int(se), tzinfo=dt.timezone.utc)
+    return int((naive - dt.timedelta(minutes=offset_minutes)).timestamp())
 
 
 async def store_epg_channels(channels: List[XMLTVChannel], user_id: str, server_id: int, db: orm.Session):
@@ -386,6 +411,125 @@ async def get_programmes_for_channels_batch(
     except Exception as e:
         logger.error(f"Failed to get programmes batch for user {user_id}, server {server_id}: {e}")
         raise
+
+
+async def search_programmes(
+    user_id: str,
+    server_id: str,
+    query: str,
+    db: orm.Session,
+    limit: int = 50,
+    provider=None,
+) -> List[dict]:
+    """
+    Search EPG programmes for a user/server by title, excluding past airings.
+
+    Currently in-progress programmes (start_time <= now < stop_time) are pinned
+    to the top of the result list, ordered by stop_time asc (ending soonest
+    first). Upcoming programmes follow, ordered by start_time asc.
+
+    Args:
+        user_id: User ID
+        server_id: Server ID
+        query: Substring to match against programme titles (case-insensitive)
+        db: Database session
+        limit: Max number of results to return
+
+    Returns:
+        List of result dictionaries
+    """
+    if not query or len(query.strip()) < 2:
+        return []
+
+    now_utc = dt.datetime.now(dt.timezone.utc)
+    now_epoch = int(now_utc.timestamp())
+    pattern = f"%{query.strip()}%"
+
+    # Stored stop_time is an XMLTV string with an arbitrary offset suffix, so
+    # lexical comparison against a fixed +0000 timestamp is unreliable. Use a
+    # generous 24h lookback prefilter (lex-comparable digits-only window) and
+    # apply the precise per-row check in Python below.
+    lookback_floor = (now_utc - dt.timedelta(hours=24)).strftime("%Y%m%d%H%M%S")
+
+    rows = (
+        db.query(Programme, Channel)
+        .join(Channel, Programme.channel_id == Channel.id)
+        .filter(
+            Channel.user_id == user_id,
+            Channel.server_id == server_id,
+            sa.func.substr(Programme.stop_time, 1, 14) >= lookback_floor,
+            Programme.titles.ilike(pattern),
+        )
+        .all()
+    )
+
+    results = []
+    for programme, channel in rows:
+        stop_epoch = xmltv_to_utc_epoch(programme.stop_time)
+        start_epoch = xmltv_to_utc_epoch(programme.start_time)
+        if stop_epoch is None or start_epoch is None:
+            continue
+        if stop_epoch <= now_epoch:
+            continue
+
+        is_live = start_epoch <= now_epoch
+        display_names = channel.get_display_names() or []
+        icons = channel.get_icons() or []
+        results.append({
+            "programme_id": programme.id,
+            "title": programme.get_default_title(),
+            "description": programme.get_default_description(),
+            "start": programme.start_time,
+            "stop": programme.stop_time,
+            "is_live": is_live,
+            "_start_epoch": start_epoch,
+            "_stop_epoch": stop_epoch,
+            "channel_xmltv_id": channel.xmltv_id,
+            "channel_display_name": (
+                display_names[0].get("text") if display_names else channel.xmltv_id
+            ),
+            "channel_icon": (icons[0].get("src") if icons else None),
+        })
+
+    # Live shows first (ending soonest), then upcoming (starting soonest).
+    results.sort(
+        key=lambda r: (
+            0 if r["is_live"] else 1,
+            r["_stop_epoch"] if r["is_live"] else r["_start_epoch"],
+        )
+    )
+    for r in results:
+        del r["_start_epoch"]
+        del r["_stop_epoch"]
+
+    trimmed = results[:limit]
+
+    # Enrich with the upstream xtream stream/category IDs so the client can
+    # navigate directly to the channel without walking every category.
+    if provider is not None and trimmed:
+        try:
+            response = provider.get_all_live_streams()
+            streams = response.json() if hasattr(response, "json") else []
+        except Exception as e:
+            logger.warning(f"Failed to fetch live streams for search enrichment: {e}")
+            streams = []
+
+        xmltv_to_stream: dict[str, dict] = {}
+        for s in streams or []:
+            epg_id = s.get("epg_channel_id")
+            if not epg_id or epg_id in xmltv_to_stream:
+                continue
+            xmltv_to_stream[epg_id] = {
+                "category_id": str(s.get("category_id")) if s.get("category_id") is not None else None,
+                "stream_id": s.get("stream_id"),
+            }
+
+        for r in trimmed:
+            mapping = xmltv_to_stream.get(r["channel_xmltv_id"])
+            r["category_id"] = mapping["category_id"] if mapping else None
+            r["stream_id"] = mapping["stream_id"] if mapping else None
+
+    return trimmed
 
 
 async def get_current_and_next_programmes(channel_id: int, current_time: str, db: orm.Session) -> dict:
