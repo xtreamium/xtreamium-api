@@ -152,6 +152,12 @@ async def get_channel_listing_from_epg(
     db: orm.Session = Depends(get_db)
 ):
     logger.info(f"GET /listing/{server_id}/{channel_id} - Fetching EPG listings for user {current_user.email}")
+
+    # Channels without an EPG id (Xtream returns null/empty) will never have
+    # programmes — short-circuit instead of doing a pointless DB lookup.
+    if not channel_id or channel_id.strip() == "" or channel_id.lower() == "null":
+        return []
+
     try:
         channel = await get_channel_by_xmltv_id(current_user.id, server_id, channel_id, db)
 
@@ -176,6 +182,8 @@ async def get_channel_listing_from_epg(
 
         logger.info(f"Successfully retrieved {len(sorted_listings)} EPG listings for channel {channel_id}")
         return sorted_listings
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Failed to get EPG listings for channel {channel_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve EPG listings")
